@@ -1,23 +1,14 @@
 {
-	"compilerOptions": {
-		"target": "es2017",
-		"module": "commonjs",
-		"outDir": "./build",
-		"rootDir": "./src",
-		"declaration": false,
-		"strict": true,
-		"sourceMap": true,
-		"noImplicitAny": true,
-		"alwaysStrict": true,
-		"typeRoots": [
-            "./node_modules/@types"
-        ]
-	},
-	"exclude": [
-		"./build/*",
-		"./node_modules/*",
-	],
-	"include": [
-		"./src/**/*.ts"
-	]
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "index.ts",
+    "commands/*.ts"
+  ]
 }
