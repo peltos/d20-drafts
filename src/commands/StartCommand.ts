@@ -18,7 +18,7 @@ const StartCommand = async (message: Message, Stories: StoryModel[]) => {
       await (msg as Message).react(CONFIG.REACT_THREE);
       await (msg as Message).react(CONFIG.REACT_FOUR);
     });
-    ConsoleTimeComponent("the START command activated")
+  ConsoleTimeComponent("\x1b[33m", "START ", "\x1b[0m", "command activated");
   return Stories;
 };
 

@@ -1,6 +1,7 @@
 import { Client } from "discord.js";
 import StoryModel from "./../../../models/StoryModel";
 import ReactionModel from "./../../../models/ReactionModel";
+import ConsoleTimeComponent from "../../ConsoleTimeComponent";
 
 const MessageReactionAddComponent = async (
   client: Client,
@@ -13,6 +14,19 @@ const MessageReactionAddComponent = async (
     const reactId = reaction.emoji.name;
     const messageId = reaction.message.id;
     const count = reaction.count;
+
+    // send to console
+    ConsoleTimeComponent(
+      "\x1b[34m",
+      "Discord Client MessageReactionAdd ",
+      "\x1b[0m",
+      "event with ",
+      `${reactId}  `,
+      "on ",
+      "\x1b[35m",
+      `${messageId} `,
+      "\x1b[0m",
+    );
 
     Stories.map((story) => {
       if (story.id === messageId) {
