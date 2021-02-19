@@ -2,11 +2,11 @@
   "name": "discordjs-d20-dungeon",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "build": "tsc",
     "dev": "ts-node .",
-    "start": "node ."
+    "start": "ts-node ."
   },
   "repository": {
     "type": "git",
