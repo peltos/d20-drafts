@@ -2,7 +2,11 @@ import { Message } from "discord.js";
 import StoryModel from "../models/StoryModel";
 import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
 import CONFIG from "../../config";
-import { ANSI_RESET, ANSI_FG_YELLOW, ANSI_FG_GREEN } from "../resources/ANSIEscapeCode";
+import {
+  ANSI_RESET,
+  ANSI_FG_YELLOW,
+  ANSI_FG_GREEN,
+} from "../resources/ANSIEscapeCode";
 
 const StartCommand = async (message: Message, Stories: StoryModel[]) => {
   // send to console

@@ -7,9 +7,12 @@ import StoryModel from "./src/models/StoryModel";
 
 import EnvGuard from "./src/guards/EnvGuard";
 
+import ReadStoryComponent from "./src/components/ReadStoryComponent"
 import ReadyComponent from "./src/components/discord/client/ReadyComponent"
 import MessageComponent from "./src/components/discord/client/MessageComponent"
 import MessageReactionAddComponent from "./src/components/discord/client/MessageReactionAddComponent"
+
+ReadStoryComponent();
 
 const client = new Client();
 let Stories: StoryModel[] = [];
