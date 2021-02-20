@@ -1,6 +1,7 @@
-import ReactionModel from "./ReactionModel";
+import StoryContentModel from "./StoryContentModel";
 
 export default interface StoryModel {
-  id: string | undefined;
-  reactions: ReactionModel[] | undefined;
+  id: string;
+  name: string;
+  content: StoryContentModel[];
 }

@@ -1,3 +1,5 @@
+import glob from "glob";
+import fs from "fs";
 import { Message } from "discord.js";
 import StoryModel from "../models/StoryModel";
 import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
@@ -8,7 +10,11 @@ import {
   ANSI_FG_GREEN,
 } from "../resources/ANSIEscapeCode";
 
-const StartCommand = async (message: Message, Stories: StoryModel[]) => {
+const StartCommand = (
+  message: Message,
+  Stories: StoryModel[],
+  storyId: string
+) => {
   // send to console
   ConsoleTimeComponent(
     ANSI_FG_YELLOW,
@@ -17,10 +23,29 @@ const StartCommand = async (message: Message, Stories: StoryModel[]) => {
     "command activated"
   );
 
+  glob("./stories/*.json", (err: any, files: any) => {
+    // read JSON files in this folder
+    if(err) console.log("cannot read the folder, something goes wrong with glob", err);
+    files.map((file: any) => {
+      fs.readFile(file, "utf8", (err: any, data: any) => {
+        // Read each file
+        if(err) console.log("cannot read the file, something goes wrong with the file", err);
+        let currentStory = JSON.parse(data);
+        if (storyId === currentStory.id) {
+          Stories = currentStory;
+          FileResult(currentStory);
+        }
+      });
+    });
+  });
+
+  const FileResult = (story: any) => {
+    console.log(Stories);
+  };
+
   // current message
-  const timeTaken = Date.now() - message.createdTimestamp;
-  await message
-    .reply(`The story starts here! chose the route you want! ${timeTaken}`)
+  message.channel
+    .send(`The story starts here! chose the route you want!`)
     .then(async (msg) => {
       // send to console
       ConsoleTimeComponent(
@@ -30,10 +55,6 @@ const StartCommand = async (message: Message, Stories: StoryModel[]) => {
         ANSI_RESET
       );
 
-      Stories.push({
-        id: (msg as Message).id,
-        reactions: [],
-      });
       await (msg as Message).react(CONFIG.REACT_ONE);
       await (msg as Message).react(CONFIG.REACT_TWO);
       await (msg as Message).react(CONFIG.REACT_THREE);

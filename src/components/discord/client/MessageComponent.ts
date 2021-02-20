@@ -28,7 +28,7 @@ const MessageComponent = async (client: Client, Stories: StoryModel[]) => {
     // Commands
     switch (command) {
       case "start":
-        Stories = await StartCommand(message, Stories);
+        Stories = await StartCommand(message, Stories, args[0]);
         break;
       default:
         ConsoleTimeComponent(

@@ -29,22 +29,22 @@ const MessageReactionAddComponent = async (
       ANSI_RESET,
     );
 
-    Stories.map((story) => {
-      if (story.id === messageId) {
-        let reactionExist = false;
-        if (story.reactions) {
-          story.reactions.map((rec: ReactionModel) => {
-            if (rec.id === reactId) {
-              reactionExist = true;
-              rec.count = count;
-            }
-          });
-        }
-        if (!reactionExist) {
-          story.reactions?.push({ id: reactId, count });
-        }
-      }
-    });
+    // Stories.map((story) => {
+    //   if (story.id === messageId) {
+    //     let reactionExist = false;
+    //     if (story.reactions) {
+    //       story.reactions.map((rec: ReactionModel) => {
+    //         if (rec.id === reactId) {
+    //           reactionExist = true;
+    //           rec.count = count;
+    //         }
+    //       });
+    //     }
+    //     if (!reactionExist) {
+    //       story.reactions?.push({ id: reactId, count });
+    //     }
+    //   }
+    // });
   });
 
   return Stories;
