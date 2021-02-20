@@ -2,6 +2,7 @@ import { Client } from "discord.js";
 import StoryModel from "./../../../models/StoryModel";
 import ReactionModel from "./../../../models/ReactionModel";
 import ConsoleTimeComponent from "../../ConsoleTimeComponent";
+import { ANSI_RESET, ANSI_FG_BLUE, ANSI_FG_MAGENTA } from "../../../resources/ANSIEscapeCode"
 
 const MessageReactionAddComponent = async (
   client: Client,
@@ -17,15 +18,15 @@ const MessageReactionAddComponent = async (
 
     // send to console
     ConsoleTimeComponent(
-      "\x1b[34m",
+      ANSI_FG_BLUE,
       "Discord Client MessageReactionAdd ",
-      "\x1b[0m",
+      ANSI_RESET,
       "event with ",
       `${reactId}  `,
       "on ",
-      "\x1b[35m",
-      `${messageId} `,
-      "\x1b[0m",
+      ANSI_FG_MAGENTA,
+      messageId,
+      ANSI_RESET,
     );
 
     Stories.map((story) => {

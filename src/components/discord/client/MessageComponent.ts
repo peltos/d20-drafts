@@ -3,6 +3,7 @@ import StoryModel from "../../../models/StoryModel";
 import CONFIG from "../../../../config";
 import StartCommand from "../../../commands/StartCommand";
 import ConsoleTimeComponent from "../../ConsoleTimeComponent";
+import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_BLUE } from "../../../resources/ANSIEscapeCode"
 
 const MessageComponent = async (client: Client, Stories: StoryModel[]) => {
   // When A message is sent
@@ -13,9 +14,9 @@ const MessageComponent = async (client: Client, Stories: StoryModel[]) => {
 
     // send to console
     ConsoleTimeComponent(
-      "\x1b[34m",
+      ANSI_FG_BLUE,
       "Discord Client Message ",
-      "\x1b[0m",
+      ANSI_RESET,
       "event"
     );
 
@@ -31,13 +32,13 @@ const MessageComponent = async (client: Client, Stories: StoryModel[]) => {
         break;
       default:
         ConsoleTimeComponent(
-          "\x1b[31m",
+          ANSI_FG_RED,
           "Command ",
-          "\x1b[0m",
+          ANSI_RESET,
           `${command?.toUpperCase() as string} `,
-          "\x1b[31m",
+          ANSI_FG_RED,
           "not found",
-          "\x1b[0m"
+          ANSI_RESET
         );
     }
   });

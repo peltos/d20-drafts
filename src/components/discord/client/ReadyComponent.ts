@@ -1,4 +1,5 @@
 import { Client } from "discord.js";
+import { ANSI_RESET, ANSI_UNDERSCORE, ANSI_FG_GREEN } from "../../../resources/ANSIEscapeCode"
 
 const ReadyComponent = async (client: Client) => {
   // When the client is ready
@@ -8,9 +9,10 @@ const ReadyComponent = async (client: Client) => {
       "-----------------------------------------------------------",
       "\n",
       `Logged in as`,
-      "\x1b[32m\x1b[4m",
-      `${client.user.tag}`,
-      "\x1b[0m",
+      ANSI_FG_GREEN,
+      ANSI_UNDERSCORE,
+      client.user.tag,
+      ANSI_RESET,
       "\n",
       "-----------------------------------------------------------",
     );
