@@ -17,7 +17,7 @@ let Stories: StoryModel[] = [];
 // Discord events
 ReadyComponent(client);
 MessageComponent(client, Stories).catch((newStories) => Stories = newStories)
-// MessageReactionAddComponent(client, Stories).catch((newStories) => Stories = newStories)
+MessageReactionAddComponent(client, Stories).catch((newStories) => Stories = newStories)
 
 EnvGuard();
 client.login(process.env.TOKEN);

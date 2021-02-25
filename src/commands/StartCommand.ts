@@ -1,66 +1,66 @@
-import glob from "glob";
 import fs from "fs";
 import { Message } from "discord.js";
 import StoryModel from "../models/StoryModel";
 import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
-import CONFIG from "../../config";
 import {
   ANSI_RESET,
   ANSI_FG_YELLOW,
   ANSI_FG_GREEN,
+  ANSI_FG_RED,
 } from "../resources/ANSIEscapeCode";
+import StoryReactionsModel from "../models/StoryReactionsModel";
 
-const StartCommand = (
-  message: Message,
-  Stories: StoryModel[],
-  storyId: string
-) => {
-  // send to console
-  ConsoleTimeComponent(
-    ANSI_FG_YELLOW,
-    "START ",
-    ANSI_RESET,
-    "command activated"
-  );
+const StartCommand = (message: Message, Stories: StoryModel[], storyId: string) => {
+  ConsoleTimeComponent(ANSI_FG_YELLOW, "START ", ANSI_RESET, "command activated");
 
-  glob("./stories/*.json", (err: any, files: any) => {
-    // read JSON files in this folder
-    if(err) console.log("cannot read the folder, something goes wrong with glob", err);
-    files.map((file: any) => {
-      fs.readFile(file, "utf8", (err: any, data: any) => {
-        // Read each file
-        if(err) console.log("cannot read the file, something goes wrong with the file", err);
-        let currentStory = JSON.parse(data);
-        if (storyId === currentStory.id) {
-          Stories = currentStory;
-          FileResult(currentStory);
-        }
+  let folder: any;
+  let currentStory: any;
+
+  if (storyId === undefined) {
+    ConsoleTimeComponent(
+      ANSI_FG_RED,
+      "No story value detected. Please enter a story value in the command !start [value]",
+      ANSI_RESET
+    );
+    return Stories;
+  }
+
+  try {
+    folder = fs.readdirSync("./stories/");
+    try {
+      let storyArray = folder.map((file: any) => {
+        let story = JSON.parse(
+          (fs.readFileSync("./stories/" + file) as unknown) as string
+        );
+        if (storyId === story.id) return story;
       });
-    });
-  });
 
-  const FileResult = (story: any) => {
-    console.log(Stories);
-  };
+      if (storyArray[0]) currentStory = storyArray[0];
+      if (!currentStory) {
+        ConsoleTimeComponent(ANSI_FG_RED, "The story value not been found", ANSI_RESET);
+      }
+    } catch (err) {
+      ConsoleTimeComponent(ANSI_FG_RED, "No files detected", ANSI_RESET);
+    }
+  } catch (err) {
+    ConsoleTimeComponent(ANSI_FG_RED, "No directory detected", ANSI_RESET);
+  }
 
-  // current message
-  message.channel
-    .send(`The story starts here! chose the route you want!`)
-    .then(async (msg) => {
+  if(currentStory){
+    // current message
+    message.channel.send(currentStory.content[0].content).then((msg) => {
       // send to console
-      ConsoleTimeComponent(
-        "Message send ",
-        ANSI_FG_GREEN,
-        "succesful",
-        ANSI_RESET
-      );
+      ConsoleTimeComponent("Message send ", ANSI_FG_GREEN, "succesful", ANSI_RESET);
 
-      await (msg as Message).react(CONFIG.REACT_ONE);
-      await (msg as Message).react(CONFIG.REACT_TWO);
-      await (msg as Message).react(CONFIG.REACT_THREE);
-      await (msg as Message).react(CONFIG.REACT_FOUR);
+      currentStory.content[0].reactions.forEach(
+        async (rection: StoryReactionsModel) => {
+          await (msg as Message).react(rection.emoji);
+        }
+      );
     });
-  return Stories;
+  }
+
+  return currentStory;
 };
 
 export default StartCommand;

@@ -28,7 +28,7 @@ const MessageComponent = async (client: Client, Stories: StoryModel[]) => {
     // Commands
     switch (command) {
       case "start":
-        Stories = await StartCommand(message, Stories, args[0]);
+        Stories = StartCommand(message, Stories, args[0]);
         break;
       default:
         ConsoleTimeComponent(
@@ -42,8 +42,9 @@ const MessageComponent = async (client: Client, Stories: StoryModel[]) => {
         );
     }
   });
-
+  console.log(Stories);
   return Stories;
+
 };
 
 export default MessageComponent;

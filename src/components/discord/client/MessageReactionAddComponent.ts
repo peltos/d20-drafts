@@ -1,6 +1,5 @@
 import { Client } from "discord.js";
 import StoryModel from "./../../../models/StoryModel";
-import ReactionModel from "./../../../models/ReactionModel";
 import ConsoleTimeComponent from "../../ConsoleTimeComponent";
 import { ANSI_RESET, ANSI_FG_BLUE, ANSI_FG_MAGENTA } from "../../../resources/ANSIEscapeCode"
 
@@ -28,23 +27,24 @@ const MessageReactionAddComponent = async (
       messageId,
       ANSI_RESET,
     );
+    console.log(Stories);
 
-    // Stories.map((story) => {
-    //   if (story.id === messageId) {
-    //     let reactionExist = false;
-    //     if (story.reactions) {
-    //       story.reactions.map((rec: ReactionModel) => {
-    //         if (rec.id === reactId) {
-    //           reactionExist = true;
-    //           rec.count = count;
-    //         }
-    //       });
-    //     }
-    //     if (!reactionExist) {
-    //       story.reactions?.push({ id: reactId, count });
-    //     }
-    //   }
-    // });
+    Stories.map((story) => {
+      if (story.id === messageId) {
+        let reactionExist = false;
+        // if (story.reactions) {
+        //   story.reactions.map((rec: ReactionModel) => {
+        //     if (rec.id === reactId) {
+        //       reactionExist = true;
+        //       rec.count = count;
+        //     }
+        //   });
+        // }
+        // if (!reactionExist) {
+        //   story.reactions?.push({ id: reactId, count });
+        // }
+      }
+    });
   });
 
   return Stories;
