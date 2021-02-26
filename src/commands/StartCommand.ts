@@ -1,6 +1,5 @@
 import fs from "fs";
 import { Message } from "discord.js";
-import StoryModel from "../models/StoryModel";
 import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
 import {
   ANSI_RESET,
@@ -9,12 +8,16 @@ import {
   ANSI_FG_RED,
 } from "../resources/ANSIEscapeCode";
 import StoryReactionsModel from "../models/StoryReactionsModel";
+import Store from "../store/Store";
+import StoryModel from "../models/StoryModel";
+import ReactionsCount from "../models/ReactionsCount";
+import SendMessageComponent from "../components/discord/client/SendMessageComponent";
 
-const StartCommand = (message: Message, Stories: StoryModel[], storyId: string) => {
+const StartCommand = (message: Message, storyId: string) => {
   ConsoleTimeComponent(ANSI_FG_YELLOW, "START ", ANSI_RESET, "command activated");
 
   let folder: any;
-  let currentStory: any;
+  let currentStory = {} as StoryModel;
 
   if (storyId === undefined) {
     ConsoleTimeComponent(
@@ -22,23 +25,34 @@ const StartCommand = (message: Message, Stories: StoryModel[], storyId: string) 
       "No story value detected. Please enter a story value in the command !start [value]",
       ANSI_RESET
     );
-    return Stories;
+    return;
   }
 
   try {
     folder = fs.readdirSync("./stories/");
     try {
-      let storyArray = folder.map((file: any) => {
+      folder.map((file: any) => {
         let story = JSON.parse(
-          (fs.readFileSync("./stories/" + file) as unknown) as string
-        );
-        if (storyId === story.id) return story;
+          (fs.readFileSync(`./stories/${file}`) as unknown) as string
+        ) as StoryModel;
+        if (storyId === story.storyId) {
+          currentStory = story;
+          return;
+        }
       });
 
-      if (storyArray[0]) currentStory = storyArray[0];
+      // check if there is anything in the file
       if (!currentStory) {
         ConsoleTimeComponent(ANSI_FG_RED, "The story value not been found", ANSI_RESET);
       }
+
+      let currentReactionCount = {
+        storyId: currentStory.storyId,
+        plotPointId: currentStory.content[0].plotPointId,
+      } as ReactionsCount;
+
+      Store.ReactionCount.push(currentReactionCount);
+      Store.Stories.push(currentStory);
     } catch (err) {
       ConsoleTimeComponent(ANSI_FG_RED, "No files detected", ANSI_RESET);
     }
@@ -46,21 +60,11 @@ const StartCommand = (message: Message, Stories: StoryModel[], storyId: string) 
     ConsoleTimeComponent(ANSI_FG_RED, "No directory detected", ANSI_RESET);
   }
 
-  if(currentStory){
-    // current message
-    message.channel.send(currentStory.content[0].content).then((msg) => {
-      // send to console
-      ConsoleTimeComponent("Message send ", ANSI_FG_GREEN, "succesful", ANSI_RESET);
-
-      currentStory.content[0].reactions.forEach(
-        async (rection: StoryReactionsModel) => {
-          await (msg as Message).react(rection.emoji);
-        }
-      );
-    });
+  if (currentStory) {
+    SendMessageComponent(message.channel, currentStory);
   }
 
-  return currentStory;
+  return;
 };
 
 export default StartCommand;

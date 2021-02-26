@@ -1,7 +1,7 @@
 import StoryContentModel from "./StoryContentModel";
 
 export default interface StoryModel {
-  id: string;
+  storyId: string;
   name: string;
   content: StoryContentModel[];
 }

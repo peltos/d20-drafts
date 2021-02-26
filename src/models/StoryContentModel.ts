@@ -1,7 +1,7 @@
 import StoryReactionsModel from "./StoryReactionsModel";
 
 export default interface StoryContentModel {
+  plotPointId: number;
   content: string;
-  id: number;
   reactions: StoryReactionsModel[];
 }

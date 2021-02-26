@@ -5,5 +5,4 @@ export default interface StoryReactionsModel {
     rollFailId: number;
     rollSuccessId: number;
   };
-  count: number;
 }
