@@ -1,8 +1,8 @@
 import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
-import { ANSI_RESET, ANSI_FG_GREEN } from "../../../resources/ANSIEscapeCode";
-import ConsoleTimeComponent from "../../ConsoleTimeComponent";
-import StoryReactionsModel from "../../../models/StoryReactionsModel";
-import StoryModel from "../../../models/StoryModel";
+import { ANSI_RESET, ANSI_FG_GREEN } from "../../resources/ANSIEscapeCode";
+import ConsoleTimeComponent from "../ConsoleTimeComponent";
+import StoryReactionsModel from "../../models/StoryReactionsModel";
+import StoryModel from "../../models/StoryModel";
 
 const SendMessageComponent = (
   channel: TextChannel | DMChannel | GroupDMChannel,

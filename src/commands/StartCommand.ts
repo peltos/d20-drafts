@@ -11,7 +11,7 @@ import StoryReactionsModel from "../models/StoryReactionsModel";
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
 import ReactionsCount from "../models/ReactionsCount";
-import SendMessageComponent from "../components/discord/client/SendMessageComponent";
+import SendMessageComponent from "../components/discord/SendMessageComponent";
 
 const StartCommand = (message: Message, storyId: string) => {
   ConsoleTimeComponent(ANSI_FG_YELLOW, "START ", ANSI_RESET, "command activated");
