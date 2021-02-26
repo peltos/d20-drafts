@@ -10,7 +10,7 @@ import {
 import StoryReactionsModel from "../models/StoryReactionsModel";
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
-import ReactionsCount from "../models/ReactionsCount";
+import PlotPointCount from "../models/PlotPointCount";
 import SendMessageComponent from "../components/discord/SendMessageComponent";
 
 const StartCommand = (message: Message, storyId: string) => {
@@ -49,9 +49,9 @@ const StartCommand = (message: Message, storyId: string) => {
       let currentReactionCount = {
         storyId: currentStory.storyId,
         plotPointId: currentStory.content[0].plotPointId,
-      } as ReactionsCount;
+      } as PlotPointCount;
 
-      Store.ReactionCount.push(currentReactionCount);
+      Store.PlotPointCount.push(currentReactionCount);
       Store.Stories.push(currentStory);
     } catch (err) {
       ConsoleTimeComponent(ANSI_FG_RED, "No files detected", ANSI_RESET);

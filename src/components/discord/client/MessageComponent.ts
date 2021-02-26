@@ -10,7 +10,7 @@ const MessageComponent = async (client: Client) => {
   client.on("message", async (message) => {
 
     if (message.author.bot) { // Listen for the bot
-      Store.ReactionCount[Store.ReactionCount.length - 1].messageId = message.id;
+      Store.PlotPointCount[Store.PlotPointCount.length - 1].messageId = message.id;
     } else { // Listen for commands
 
       // Check if a command is used (by not a bot)
