@@ -6,11 +6,15 @@ import StoryModel from "../../models/StoryModel";
 
 const SendMessageComponent = (
   channel: TextChannel | DMChannel | GroupDMChannel,
-  story: StoryModel
+  story: StoryModel,
+  dice: number | undefined = undefined
 ) => {
   // current message
-  channel.send(`${AsciiDice(20)} ${story.content[0].content}`).then((msg) => {
-    // send to console
+  let message: string = '';
+  if (dice !== undefined) message += AsciiDice(20);
+  message += story.content[0].content;
+
+  channel.send(message).then((msg) => {
     ConsoleTimeComponent("Message send ", ANSI_FG_GREEN, "succesful", ANSI_RESET);
 
     story.content[0].reactions.forEach(async (rection: StoryReactionsModel) => {

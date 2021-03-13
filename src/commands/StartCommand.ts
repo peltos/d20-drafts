@@ -4,10 +4,8 @@ import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_YELLOW,
-  ANSI_FG_GREEN,
   ANSI_FG_RED,
 } from "../resources/ANSIEscapeCode";
-import StoryReactionsModel from "../models/StoryReactionsModel";
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
 import PlotPointCount from "../models/PlotPointCount";
