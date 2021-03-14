@@ -1,9 +1,9 @@
 import { Client } from "discord.js";
-import Store from "../../../store/Store";
-import CONFIG from "../../../../config";
-import StartCommand from "../../../commands/StartCommand";
-import ConsoleTimeComponent from "../../ConsoleTimeComponent";
-import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_BLUE } from "../../../resources/ANSIEscapeCode";
+import Store from "../../store/Store";
+import CONFIG from "../../../config";
+import StartCommand from "../../commands/StartCommand";
+import ConsoleTimeComponent from "../ConsoleTimeComponent";
+import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_BLUE } from "../../resources/ANSIEscapeCode";
 
 const MessageComponent = async (client: Client) => {
   // When A message is sent

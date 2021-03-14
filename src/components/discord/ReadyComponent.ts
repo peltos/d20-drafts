@@ -1,5 +1,5 @@
 import { Client } from "discord.js";
-import { ANSI_RESET, ANSI_UNDERSCORE, ANSI_FG_GREEN } from "../../../resources/ANSIEscapeCode"
+import { ANSI_RESET, ANSI_UNDERSCORE, ANSI_FG_GREEN } from "../../resources/ANSIEscapeCode"
 
 const ReadyComponent = async (client: Client) => {
   // When the client is ready
