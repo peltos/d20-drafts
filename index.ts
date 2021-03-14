@@ -16,5 +16,5 @@ new ReadyComponent(client);
 new MessageComponent(client);
 new MessageReactionComponent(client);
 
-EnvGuard();
+new EnvGuard();
 client.login(process.env.TOKEN);
