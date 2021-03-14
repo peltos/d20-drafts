@@ -30,7 +30,7 @@ const StartCommand = (message: Message, storyId: string) => {
     folder = fs.readdirSync("./stories/");
     try {
       folder.map((file: any) => {
-        let story = JSON.parse(
+        const story = JSON.parse(
           (fs.readFileSync(`./stories/${file}`) as unknown) as string
         ) as StoryModel;
         if (storyId === story.storyId) {
@@ -44,7 +44,7 @@ const StartCommand = (message: Message, storyId: string) => {
         ConsoleTimeComponent(ANSI_FG_RED, "The story value not been found", ANSI_RESET);
       }
 
-      let currentReactionCount = {
+      const currentReactionCount = {
         storyId: currentStory.storyId,
         plotPointId: currentStory.content[0].plotPointId,
       } as PlotPointCount;

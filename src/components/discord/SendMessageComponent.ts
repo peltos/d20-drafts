@@ -10,7 +10,7 @@ const SendMessageComponent = (
   dice: number | undefined = undefined
 ) => {
   // current message
-  let message: string = '';
+  let message = "";
   if (dice !== undefined) message += AsciiDice(20);
   message += story.content[0].content;
 
@@ -34,7 +34,7 @@ const AsciiDice = (num: number) => {
   let numStr;
   if (num.toString().length === 1) numStr = ` ${num} `;
   else if (num.toString().length >= 2) {
-    let double = num.toString().split("");
+    const double = num.toString().split("");
     numStr = `${double[0]} ${double[1]}`;
   }
 
