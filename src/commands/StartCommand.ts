@@ -11,7 +11,7 @@ export default class StartCommand {
   constructor(message: Message, storyId: string) {
     new ConsoleTimeComponent(ANSI_FG_YELLOW, "START ", ANSI_RESET, "command activated");
 
-    let folder: any;
+    let folder: string[];
     let currentStory = {} as StoryModel;
 
     if (storyId === undefined) {
@@ -26,7 +26,7 @@ export default class StartCommand {
     try {
       folder = fs.readdirSync("./stories/");
       try {
-        folder.map((file: any) => {
+        folder.map((file: string) => {
           const story = JSON.parse(
             (fs.readFileSync(`./stories/${file}`) as unknown) as string
           ) as StoryModel;
