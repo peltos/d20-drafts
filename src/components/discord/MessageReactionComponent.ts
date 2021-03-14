@@ -6,7 +6,7 @@ import {
   ANSI_FG_MAGENTA,
 } from "../../resources/ANSIEscapeCode";
 import Store from "../../store/Store";
-import ReactionsCountReactions from "../../models/PlotPointCountReactions";
+import ReactionsCountReactions from "../../models/PlotPointCountReactionsModel";
 
 export default class MessageReactionComponent {
   constructor(client: Client) {
