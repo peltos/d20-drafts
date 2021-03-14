@@ -5,7 +5,7 @@ import { ANSI_RESET, ANSI_FG_YELLOW, ANSI_FG_RED } from "../resources/ANSIEscape
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
 import PlotPointCountModel from "../models/PlotPointCountModel";
-import SendMessageComponent from "../components/discord/SendMessageComponent";
+import MessageSendComponent from "../components/MessageSendComponent";
 
 export default class StartCommand {
   constructor(message: Message, storyId: string) {
@@ -60,7 +60,7 @@ export default class StartCommand {
     }
 
     if (currentStory) {
-      new SendMessageComponent(message.channel, currentStory.plotPoints[0]);
+      new MessageSendComponent(message.channel, currentStory.plotPoints[0]);
     }
 
     return;

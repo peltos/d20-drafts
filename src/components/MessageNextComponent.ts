@@ -1,15 +1,15 @@
 import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
-import ConsoleTimeComponent from "../ConsoleTimeComponent";
+import ConsoleTimeComponent from "./ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_BLUE,
   ANSI_FG_MAGENTA,
-} from "../../resources/ANSIEscapeCode";
-import Store from "../../store/Store";
-import SendMessageComponent from "./SendMessageComponent";
-import StoryContentModel from "../../models/StoryContentModel";
+} from "../resources/ANSIEscapeCode";
+import Store from "../store/Store";
+import MessageSendComponent from "./MessageSendComponent";
+import StoryContentModel from "../models/StoryContentModel";
 
-export default class NextMessageComponent {
+export default class MessageNextComponent {
   public highestVoteEmoji = "";
   public plotPointId = 0;
 
@@ -103,7 +103,7 @@ export default class NextMessageComponent {
         }
       });
     });
-    new SendMessageComponent(channel, nextStoryContent, dice);
+    new MessageSendComponent(channel, nextStoryContent, dice);
 
     return nextStoryContent;
   };

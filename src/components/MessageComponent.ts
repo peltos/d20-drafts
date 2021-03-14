@@ -1,10 +1,10 @@
 import { Client } from "discord.js";
-import Store from "../../store/Store";
-import CONFIG from "../../../config";
-import StartCommand from "../../commands/StartCommand";
-import ConsoleTimeComponent from "../ConsoleTimeComponent";
-import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_BLUE } from "../../resources/ANSIEscapeCode";
-import NextMessageComponent from "./NextMessageComponent";
+import Store from "../store/Store";
+import CONFIG from "../../config";
+import StartCommand from "../commands/StartCommand";
+import ConsoleTimeComponent from "./ConsoleTimeComponent";
+import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_BLUE } from "../resources/ANSIEscapeCode";
+import MessageNextComponent from "./MessageNextComponent";
 
 export default class MessageComponent {
   constructor(client: Client) {
@@ -15,7 +15,7 @@ export default class MessageComponent {
         Store.PlotPointCount[Store.PlotPointCount.length - 1].messageId = message.id;
         setTimeout(() => {
           message.channel.fetchMessage(message.id).then((fetchMessage) => {
-            const next = new NextMessageComponent(
+            const next = new MessageNextComponent(
               fetchMessage,
               Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId
             );
