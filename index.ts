@@ -12,9 +12,9 @@ import MessageReactionComponent from "./src/components/discord/MessageReactionCo
 const client = new Client();
 
 // Discord events
-ReadyComponent(client);
-MessageComponent(client);
-MessageReactionComponent(client);
+new ReadyComponent(client);
+new MessageComponent(client);
+new MessageReactionComponent(client);
 
 EnvGuard();
 client.login(process.env.TOKEN);
