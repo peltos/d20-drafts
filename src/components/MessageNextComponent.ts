@@ -2,7 +2,7 @@ import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
 import {
   ANSI_RESET,
-  ANSI_FG_BLUE,
+  ANSI_FG_CYAN,
   ANSI_FG_MAGENTA,
 } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
@@ -37,7 +37,7 @@ export default class MessageNextComponent {
     this.nextStoryContent(message.channel, this.currentPlotPointResult());
 
     new ConsoleTimeComponent(
-      ANSI_FG_BLUE,
+      ANSI_FG_CYAN,
       `Plot Point `,
       ANSI_RESET,
       ANSI_FG_MAGENTA,

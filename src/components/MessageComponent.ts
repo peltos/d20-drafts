@@ -3,7 +3,7 @@ import Store from "../store/Store";
 import CONFIG from "../../config";
 import StartCommand from "../commands/StartCommand";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
-import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_BLUE } from "../resources/ANSIEscapeCode";
+import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_CYAN } from "../resources/ANSIEscapeCode";
 import MessageNextComponent from "./MessageNextComponent";
 
 export default class MessageComponent {
@@ -22,25 +22,28 @@ export default class MessageComponent {
             Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId =
               next.plotPointId;
           });
-          // Day Hrs Min Sec MiliS
-        }, 1 * 1 * 1 * 5 * 1000);
+          
+        }, 5000); // MiliSeconds
       } else {
         // Listen for commands
 
         // Check if a command is used
         if (!message.content.startsWith(CONFIG.prefix)) return;
 
+        // Prepare the command
+        const commandBody = message.content.slice(CONFIG.prefix.length);
+        const args = commandBody.split(" ");
+
+        if (args.shift() !== "d20d") return;
+
         // send to console
         new ConsoleTimeComponent(
-          ANSI_FG_BLUE,
+          ANSI_FG_CYAN,
           "Discord Client Message ",
           ANSI_RESET,
           "event"
         );
 
-        // Prepare the command
-        const commandBody = message.content.slice(CONFIG.prefix.length);
-        const args = commandBody.split(" ");
         const command = args.shift()?.toLowerCase();
 
         // Commands
