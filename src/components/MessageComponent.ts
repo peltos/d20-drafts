@@ -49,7 +49,7 @@ export default class MessageComponent {
         // Commands
         switch (command) {
           case "start":
-            new StartCommand(message, args[0]);
+            new StartCommand(message, args[0], args[1]);
             break;
           default:
             new ConsoleTimeComponent(

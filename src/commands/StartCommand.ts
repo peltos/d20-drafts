@@ -6,10 +6,13 @@ import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
 import PlotPointCountModel from "../models/PlotPointCountModel";
 import MessageSendComponent from "../components/MessageSendComponent";
+import StoryContentModel from "../models/StoryContentModel";
 
 export default class StartCommand {
-  constructor(message: Message, storyId: string) {
+  constructor(message: Message, storyId: string, storyPlotPoint: string) {
     new ConsoleTimeComponent(ANSI_FG_YELLOW, "START ", ANSI_RESET, "command activated");
+    const currrentStoryPlotPoint = storyPlotPoint ? parseInt(storyPlotPoint) : 0;
+    let selectedPlotPoint = {} as StoryContentModel;
 
     let folder: string[];
     let currentStory = {} as StoryModel;
@@ -45,9 +48,15 @@ export default class StartCommand {
           );
         }
 
+        currentStory.plotPoints.map((plotPoint) => {
+          if(plotPoint.plotPointId === currrentStoryPlotPoint){
+            selectedPlotPoint = plotPoint;
+          }
+        })
+
         const currentReactionCount = {
           storyId: currentStory.storyId,
-          plotPointId: currentStory.plotPoints[0].plotPointId,
+          plotPointId: selectedPlotPoint.plotPointId,
         } as PlotPointCountModel;
 
         Store.PlotPointCount.push(currentReactionCount);
@@ -60,7 +69,7 @@ export default class StartCommand {
     }
 
     if (currentStory) {
-      new MessageSendComponent(message.channel, currentStory.plotPoints[0]);
+      new MessageSendComponent(message.channel, selectedPlotPoint);
     }
 
     return;
