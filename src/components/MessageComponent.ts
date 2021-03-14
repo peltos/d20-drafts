@@ -11,14 +11,14 @@ export default class MessageComponent {
     // When A message is sent
     client.on("message", async (message) => {
       if (message.author.bot) {
-        this.botMessage(message);
+        this.botMessageResponse(message);
       } else {
-        this.userMessage(message);
+        this.userMessageResponse(message);
       }
     });
   }
 
-  private botMessage = (message: Message) => {
+  private botMessageResponse = (message: Message) => {
     // Listen for the bot
     Store.PlotPointCount[Store.PlotPointCount.length - 1].messageId = message.id;
     setTimeout(() => {
@@ -33,7 +33,7 @@ export default class MessageComponent {
     }, 5000); // MiliSeconds
   };
 
-  private userMessage = (message: Message) => {
+  private userMessageResponse = (message: Message) => {
     // Check if a command is used
     if (!message.content.startsWith(CONFIG.prefix)) return;
 
