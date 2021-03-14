@@ -2,23 +2,23 @@ import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
 import { ANSI_RESET, ANSI_FG_GREEN } from "../../resources/ANSIEscapeCode";
 import ConsoleTimeComponent from "../ConsoleTimeComponent";
 import StoryReactionsModel from "../../models/StoryReactionsModel";
-import StoryModel from "../../models/StoryModel";
+import StoryContentModel from "../../models/StoryContentModel";
 
 export default class SendMessageComponent {
   constructor(
     channel: TextChannel | DMChannel | GroupDMChannel,
-    story: StoryModel,
+    storyContent: StoryContentModel,
     dice: number | undefined = undefined
   ) {
     // current message
     let message = "";
-    if (dice !== undefined) message += this.AsciiDice(20);
-    message += story.content[0].content;
+    if (dice !== undefined) message += this.AsciiDice(dice);
+    message += storyContent.content;
 
     channel.send(message).then((msg) => {
       new ConsoleTimeComponent("Message send ", ANSI_FG_GREEN, "succesful", ANSI_RESET);
 
-      story.content[0].reactions.forEach(async (rection: StoryReactionsModel) => {
+      storyContent.reactions.forEach(async (rection: StoryReactionsModel) => {
         await (msg as Message).react(rection.emoji);
       });
     });

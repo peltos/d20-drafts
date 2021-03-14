@@ -1,7 +1,7 @@
 {
   "storyId": "example",
   "name": "example story",
-  "content": [
+  "plotPoints": [
     {
       "content": "This is the start of the story! You start in a cave with a sword and shield. You can go left or right. Choose 1️⃣ for left and 2️⃣ for right",
       "plotPointId": 0,
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "content": "You found the exit! but there is a evil monster in front of it. Choose 1️⃣ to fight (1d20 roll, roll higher then a 12) and 2️⃣ to run away!",
+      "content": "You see the exit in the distance! but there is a evil monster in front of it. Choose 1️⃣ to fight (1d20 roll, roll higher then a 12) and 2️⃣ to run away!",
       "plotPointId": 1,
       "reactions": [
         {

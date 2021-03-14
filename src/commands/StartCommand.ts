@@ -4,7 +4,7 @@ import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
 import { ANSI_RESET, ANSI_FG_YELLOW, ANSI_FG_RED } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
-import PlotPointCount from "../models/PlotPointCount";
+import PlotPointCountModel from "../models/PlotPointCountModel";
 import SendMessageComponent from "../components/discord/SendMessageComponent";
 
 export default class StartCommand {
@@ -47,8 +47,8 @@ export default class StartCommand {
 
         const currentReactionCount = {
           storyId: currentStory.storyId,
-          plotPointId: currentStory.content[0].plotPointId,
-        } as PlotPointCount;
+          plotPointId: currentStory.plotPoints[0].plotPointId,
+        } as PlotPointCountModel;
 
         Store.PlotPointCount.push(currentReactionCount);
         Store.Stories.push(currentStory);
@@ -60,7 +60,7 @@ export default class StartCommand {
     }
 
     if (currentStory) {
-      new SendMessageComponent(message.channel, currentStory);
+      new SendMessageComponent(message.channel, currentStory.plotPoints[0]);
     }
 
     return;
