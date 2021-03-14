@@ -25,7 +25,7 @@
       ]
     },
     {
-      "content": "You found the exit! but there is a evil monster in front of it. Choose 1️⃣ to fight (1d20 roll, roll higher then a 12) and 2️⃣ to run away!",
+      "content": "You see the exit in the distance! but there is a evil monster in front of it. Choose 1️⃣ to fight (1d20 roll, roll higher then a 12) and 2️⃣ to run away!",
       "plotPointId": 1,
       "reactions": [
         {

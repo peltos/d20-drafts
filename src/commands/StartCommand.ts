@@ -60,7 +60,7 @@ export default class StartCommand {
     }
 
     if (currentStory) {
-      new SendMessageComponent(message.channel, currentStory);
+      new SendMessageComponent(message.channel, currentStory.content[0]);
     }
 
     return;
