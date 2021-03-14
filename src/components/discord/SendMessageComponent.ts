@@ -3,7 +3,6 @@ import { ANSI_RESET, ANSI_FG_GREEN } from "../../resources/ANSIEscapeCode";
 import ConsoleTimeComponent from "../ConsoleTimeComponent";
 import StoryReactionsModel from "../../models/StoryReactionsModel";
 import StoryContentModel from "../../models/StoryContentModel";
-import Store from "../../store/Store";
 
 export default class SendMessageComponent {
   constructor(

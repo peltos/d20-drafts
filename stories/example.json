@@ -1,7 +1,7 @@
 {
   "storyId": "example",
   "name": "example story",
-  "content": [
+  "plotPoints": [
     {
       "content": "This is the start of the story! You start in a cave with a sword and shield. You can go left or right. Choose 1️⃣ for left and 2️⃣ for right",
       "plotPointId": 0,

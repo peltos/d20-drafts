@@ -4,6 +4,7 @@ import CONFIG from "../../../config";
 import StartCommand from "../../commands/StartCommand";
 import ConsoleTimeComponent from "../ConsoleTimeComponent";
 import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_BLUE } from "../../resources/ANSIEscapeCode";
+import NextMessageComponent from "./NextMessageComponent";
 
 export default class MessageComponent {
   constructor(client: Client) {
@@ -12,10 +13,21 @@ export default class MessageComponent {
       if (message.author.bot) {
         // Listen for the bot
         Store.PlotPointCount[Store.PlotPointCount.length - 1].messageId = message.id;
+        setTimeout(() => {
+          message.channel.fetchMessage(message.id).then((fetchMessage) => {
+            const next = new NextMessageComponent(
+              fetchMessage,
+              Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId
+            );
+            Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId =
+              next.plotPointId;
+          });
+          // Day Hrs Min Sec MiliS
+        }, 1 * 1 * 1 * 5 * 1000);
       } else {
         // Listen for commands
 
-        // Check if a command is used (by not a bot)
+        // Check if a command is used
         if (!message.content.startsWith(CONFIG.prefix)) return;
 
         // send to console

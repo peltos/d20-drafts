@@ -47,7 +47,7 @@ export default class StartCommand {
 
         const currentReactionCount = {
           storyId: currentStory.storyId,
-          plotPointId: currentStory.content[0].plotPointId,
+          plotPointId: currentStory.plotPoints[0].plotPointId,
         } as PlotPointCountModel;
 
         Store.PlotPointCount.push(currentReactionCount);
@@ -60,7 +60,7 @@ export default class StartCommand {
     }
 
     if (currentStory) {
-      new SendMessageComponent(message.channel, currentStory.content[0]);
+      new SendMessageComponent(message.channel, currentStory.plotPoints[0]);
     }
 
     return;
