@@ -7,22 +7,28 @@ import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_CYAN } from "../resources/ANSIEscapeCo
 import MessageNextComponent from "./MessageNextComponent";
 
 export default class MessageComponent {
-  constructor(client: Client) {
+
+  public message = {} as Message;
+  public env = {} as Record<string, unknown>;
+
+  constructor(client: Client, env: Record<string, unknown>) {
+    this.env = env;
     // When A message is sent
     client.on("message", async (message) => {
+      this.message = message;
       if (message.author.bot) {
-        this.botMessageResponse(message);
+        this.botMessageResponse();
       } else {
-        this.userMessageResponse(message);
+        this.userMessageResponse();
       }
     });
   }
 
-  private botMessageResponse = (message: Message) => {
+  private botMessageResponse = () => {
     // Listen for the bot
-    Store.PlotPointCount[Store.PlotPointCount.length - 1].messageId = message.id;
+    Store.PlotPointCount[Store.PlotPointCount.length - 1].messageId = this.message.id;
     setTimeout(() => {
-      message.channel.fetchMessage(message.id).then((fetchMessage) => {
+      this.message.channel.fetchMessage(this.message.id).then((fetchMessage) => {
         const next = new MessageNextComponent(
           fetchMessage,
           Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId
@@ -30,15 +36,15 @@ export default class MessageComponent {
         Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId =
           next.plotPointId;
       });
-    }, 5000); // MiliSeconds
+    }, this.env.TIME ? parseInt(this.env.TIME as string) : 5000); // MiliSeconds
   };
 
-  private userMessageResponse = (message: Message) => {
+  private userMessageResponse = () => {
     // Check if a command is used
-    if (!message.content.startsWith(CONFIG.prefix)) return;
+    if (!this.message.content.startsWith(CONFIG.prefix)) return;
 
     // Prepare the command
-    const commandBody = message.content.slice(CONFIG.prefix.length);
+    const commandBody = this.message.content.slice(CONFIG.prefix.length);
     const args = commandBody.split(" ");
 
     if (args.shift() !== "d20d") return;
@@ -56,7 +62,7 @@ export default class MessageComponent {
     // Commands
     switch (command) {
       case "start":
-        new StartCommand(message, args[0], args[1]);
+        new StartCommand(this.message, args[0], args[1]);
         break;
       default:
         new ConsoleTimeComponent(

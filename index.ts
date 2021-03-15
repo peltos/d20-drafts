@@ -12,7 +12,7 @@ const client = new Client();
 
 // Discord events
 new ReadyComponent(client);
-new MessageComponent(client);
+new MessageComponent(client, process.env);
 
 new EnvGuard();
 client.login(process.env.TOKEN);
