@@ -1,6 +1,5 @@
 import { Client, Message } from "discord.js";
 import Store from "../store/Store";
-import CONFIG from "../../config";
 import StartCommand from "../commands/StartCommand";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
 import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_CYAN } from "../resources/ANSIEscapeCode";
@@ -36,15 +35,15 @@ export default class MessageComponent {
         Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId =
           next.plotPointId;
       });
-    }, this.env.TIME ? parseInt(this.env.TIME as string) : 5000); // MiliSeconds
+    }, this.env.TIME ? parseInt(this.env.TIME as string) : 10000); // MiliSeconds
   };
 
   private userMessageResponse = () => {
     // Check if a command is used
-    if (!this.message.content.startsWith(CONFIG.prefix)) return;
+    if (!this.message.content.startsWith("!")) return;
 
     // Prepare the command
-    const commandBody = this.message.content.slice(CONFIG.prefix.length);
+    const commandBody = this.message.content.slice(("!").length);
     const args = commandBody.split(" ");
 
     if (args.shift() !== "d20d") return;

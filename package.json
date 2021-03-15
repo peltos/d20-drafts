@@ -4,8 +4,6 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "ts-node .",
     "start": "ts-node .",
     "lint": "eslint . --ext .ts"
   },

@@ -29,8 +29,14 @@ Then start the application with
 npm start
 ```
 
-## Commands
-Here are all the command used for all your adventures
+## Terminal Commands
+These are all the commands you can do in the terminal
+- `npm start` - to start the application
+- `npm run lint` - to activate the ESLint library
+
+
+## Discord Commands
+These are all the commands used for all your adventures in discord
 
 ### Start
 
@@ -60,4 +66,4 @@ Example (going to a specific Plot Point):
 
 The following options are available in the `.env` file,
 - `TOKEN` - The discord token that is required to start this application
-- `TIME` - The time it takes for people to vote on every plot point. (defaults at 5000 miliseconds)
+- `TIME` - The time in miliseconds it takes for people to vote on every plot point. (defaults at 10000 miliseconds / 10 seconds)
