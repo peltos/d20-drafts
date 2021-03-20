@@ -1,10 +1,6 @@
 import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
-import {
-  ANSI_RESET,
-  ANSI_FG_CYAN,
-  ANSI_FG_MAGENTA,
-} from "../resources/ANSIEscapeCode";
+import { ANSI_RESET, ANSI_FG_CYAN, ANSI_FG_MAGENTA } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import MessageSendComponent from "./MessageSendComponent";
 import StoryContentModel from "../models/StoryContentModel";
@@ -17,19 +13,21 @@ export default class MessageNextComponent {
     this.plotPointId = plotPointId;
     let currentHighestCount: number | undefined = undefined;
     message.reactions.map((reaction) => {
-      if (currentHighestCount === undefined) {
-        this.highestVoteEmoji = reaction.emoji.name;
-        currentHighestCount = reaction.count;
-      } else {
-        if (currentHighestCount < reaction.count) {
+      if (reaction.me) { // check if it's a valid reaction
+        if (currentHighestCount === undefined) {
           this.highestVoteEmoji = reaction.emoji.name;
           currentHighestCount = reaction.count;
-        }
-        if (currentHighestCount === reaction.count) {
-          this.highestVoteEmoji = this.randomChoice([
-            this.highestVoteEmoji,
-            reaction.emoji.name,
-          ]);
+        } else {
+          if (currentHighestCount < reaction.count) {
+            this.highestVoteEmoji = reaction.emoji.name;
+            currentHighestCount = reaction.count;
+          }
+          if (currentHighestCount === reaction.count) {
+            this.highestVoteEmoji = this.randomChoice([
+              this.highestVoteEmoji,
+              reaction.emoji.name,
+            ]);
+          }
         }
       }
     });
@@ -50,7 +48,6 @@ export default class MessageNextComponent {
       "has chosen ",
       `${this.highestVoteEmoji} `
     );
-
   }
   public valueOf = (): void => {
     return;
