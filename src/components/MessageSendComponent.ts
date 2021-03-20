@@ -8,47 +8,62 @@ export default class MessageSendComponent {
   constructor(
     channel: TextChannel | DMChannel | GroupDMChannel,
     storyContent: StoryContentModel,
-    dice: number | undefined = undefined
+    chanceDice: number | undefined = undefined,
+    damageDice: string[] | undefined = undefined,
+    damageRolls: number[] | undefined = undefined,
+    plotPointId: number | undefined = undefined
   ) {
     // current message
-    let message = "";
-    if (dice !== undefined) message += this.AsciiDice(dice);
-    message += storyContent.content;
+    const message = [
+      this.DiceRolled(chanceDice, damageDice, damageRolls),
+      storyContent.content,
+    ].join("");
 
-    channel.send(message).then((msg) => {
+    channel.send(message).then(async (msg) => {
       new ConsoleTimeComponent("Message send ", ANSI_FG_GREEN, "succesful", ANSI_RESET);
-
-      storyContent.reactions.forEach(async (rection: StoryReactionsModel) => {
-        await (msg as Message).react(rection.emoji);
-      });
+      if (storyContent.reactions) {
+        await (storyContent.reactions as StoryReactionsModel[]).forEach(async (rection: StoryReactionsModel) => {
+          if (rection.emoji !== null) await (msg as Message).react(rection.emoji);
+        });
+      }
     });
   }
+  private DiceRolled = (
+    chanceDice: number | undefined,
+    damageDice: string[] | undefined = undefined,
+    damageRolls: number[] | undefined
+  ) => {
+    if (chanceDice === undefined) return "";
 
-  private AsciiDice = (num: number) => {
-    if (num > 20 || num < 1) return "";
+    const message = [
+      "----------------------\n",
+      `Dice rolled: **${chanceDice}**\n`,
+      this.DamageRolls(damageDice, damageRolls),
+      "----------------------\n",
+    ].join("");
 
-    let c;
-    if (num === 20) c = "+";
-    else if (num === 1) c = "-";
-    else c = "|";
+    return message;
+  };
 
-    let numStr;
-    if (num.toString().length === 1) numStr = ` ${num} `;
-    else if (num.toString().length >= 2) {
-      const double = num.toString().split("");
-      numStr = `${double[0]} ${double[1]}`;
-    }
+  private DamageRolls = (
+    damageDice: string[] | undefined = undefined,
+    damageRolls: number[] | undefined
+  ) => {
+    if (damageRolls === undefined || damageDice === undefined) return "";
+    let counter = 0;
+    const totalDamage = damageRolls.reduce((a, b) => a + b, 0);
 
-    const dice = `\`\`\`diff
-${c}     _ --- _     ${c}
-${c}   -   / \\   -   ${c}
-${c}  |\\ /_____\\ /|  ${c}
-${c}  | /\\     /\\ |  ${c}
-${c}  |/  \\${numStr}/  \\|  ${c}
-${c}  |____\\ /____|  ${c}
-${c}   - _  |  _ -   ${c}
-${c}       ---       ${c}\`\`\``;
+    const message = [
+      "\n",
+      `Damage: **${damageDice[0]}d${damageDice[1]}**\n`,
+      damageRolls.map((roll) => {
+        const rollMessage = `Roll ${counter + 1}: **${roll}**\n`;
+        counter++;
+        return rollMessage;
+      }),
+      `Totaal damage: **${totalDamage}**\n`,
+    ].join("");
 
-    return dice;
+    return message;
   };
 }
