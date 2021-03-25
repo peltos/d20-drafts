@@ -17,7 +17,7 @@ export default class MessageSendComponent {
     
     //send message + image if the file_destination in example.json is not empty. If the file_destination is empty, send an undefined oepration
     //Current image from internet.
-    let file = storyContent.file_destination !== null ? {files: [storyContent.file_destination]} : undefined;
+    const file = storyContent.file_destination !== null ? {files: [storyContent.file_destination]} : undefined;
 
     channel.send(message, file).then((msg) => {
       new ConsoleTimeComponent("Message send ", ANSI_FG_GREEN, "succesful", ANSI_RESET);
