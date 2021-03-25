@@ -6,7 +6,6 @@ import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_CYAN } from "../resources/ANSIEscapeCo
 import MessageNextComponent from "./MessageNextComponent";
 
 export default class MessageComponent {
-  public message = {} as Message;
   public env = {} as Record<string, unknown>;
   public storyEnd = false;
 
@@ -14,18 +13,19 @@ export default class MessageComponent {
     this.env = env;
     // When A message is sent
     client.on("message", async (message) => {
-      this.message = message;
       if (message.author.bot) {
-        this.botMessageResponse();
+        this.botMessageResponse(message);
       } else {
-        this.userMessageResponse();
+        this.userMessageResponse(message);
       }
     });
   }
 
-  private botMessageResponse = () => {
+  private botMessageResponse = (message: Message) => {
     // Listen for the bot
-    Store.PlotPointCount[Store.PlotPointCount.length - 1].messageId = this.message.id;
+    if(Store.PlotPointCount[Store.PlotPointCount.length - 1].channelId === undefined) {
+      Store.PlotPointCount[Store.PlotPointCount.length - 1].channelId = message.channel;
+    }
 
     if (!this.storyEnd) {
       Store.Stories.map((story) => {
@@ -36,23 +36,20 @@ export default class MessageComponent {
           ) {
             if (plotPoint.reactions) {
               setTimeout(
-                () => {
-                  this.message.channel
-                    .fetchMessage(this.message.id)
-                    .then((fetchMessage) => {
-                      const next = new MessageNextComponent(
-                        fetchMessage,
-                        Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId
-                      );
-                      Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId =
-                        next.plotPointId;
-                    });
-                },
+                () =>
+                  message.channel.fetchMessage(message.id).then((fetchMessage) => {
+                    const next = new MessageNextComponent(
+                      fetchMessage,
+                      Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId
+                    );
+                    Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId =
+                      next.plotPointId;
+                  }),
                 this.env.TIME ? parseInt(this.env.TIME as string) : 10000
               ); // MiliSeconds
             } else {
               this.storyEnd = true;
-              this.message.channel.send(
+              message.channel.send(
                 `\n---------------------------------------------------------------------\nThe story has ended. Restart the story to see other endings\n---------------------------------------------------------------------`
               );
             }
@@ -64,12 +61,12 @@ export default class MessageComponent {
     }
   };
 
-  private userMessageResponse = () => {
+  private userMessageResponse = (message: Message) => {
     // Check if a command is used
-    if (!this.message.content.startsWith("!")) return;
+    if (!message.content.startsWith("!")) return;
 
     // Prepare the command
-    const commandBody = this.message.content.slice("!".length);
+    const commandBody = message.content.slice("!".length);
     const args = commandBody.split(" ");
 
     if (args.shift() !== "d20d") return;
@@ -87,7 +84,7 @@ export default class MessageComponent {
     // Commands
     switch (command) {
       case "start":
-        new StartCommand(this.message, args[0], args[1]);
+        new StartCommand(message, args[0], args[1]);
         break;
       default:
         new ConsoleTimeComponent(
