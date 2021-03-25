@@ -65,6 +65,7 @@
     },
     {
       "content": "You slashed the evil monster and it died. You can savely leave the cave! Congratulations! Choose 1️⃣ to reset the story.",
+      "file_destination": null,
       "plotPointId": 3,
       "reactions": [
         {
@@ -79,6 +80,7 @@
     },
     {
       "content": "You missed with your sword and the evil monster put his claw in your ribcage. You lay on the ground and die in a few seconds. Beter luck next time! Choose 1️⃣ to reset the story.",
+      "file_destination": null,
       "plotPointId": 4,
       "reactions": [
         {
