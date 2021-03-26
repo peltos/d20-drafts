@@ -1,7 +1,7 @@
 import fs from "fs";
 import { Message } from "discord.js";
 import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
-import { ANSI_RESET, ANSI_FG_YELLOW, ANSI_FG_RED } from "../resources/ANSIEscapeCode";
+import { ANSI_RESET, ANSI_FG_YELLOW, ANSI_FG_RED, ANSI_FG_GREEN, ANSI_FG_MAGENTA } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
 import PlotPointCountModel from "../models/PlotPointCountModel";
@@ -57,7 +57,10 @@ export default class StartCommand {
         const currentReactionCount = {
           storyId: currentStory.storyId,
           plotPointId: selectedPlotPoint.plotPointId,
+          storyEnded: false,
         } as PlotPointCountModel;
+
+        console.log(currentReactionCount);
 
         Store.PlotPointCount.push(currentReactionCount);
         Store.Stories.push(currentStory);
@@ -70,6 +73,16 @@ export default class StartCommand {
 
     if (currentStory) {
       new MessageSendComponent(message.channel, selectedPlotPoint);
+      new ConsoleTimeComponent(
+        `Story `,
+        ANSI_FG_GREEN,
+        `${currentStory.storyId.toUpperCase()} `,
+        ANSI_RESET,
+        "has started on channel ",
+        ANSI_FG_MAGENTA,
+        `${message.channel.id} `,
+        ANSI_RESET,
+      );
     }
 
     return;

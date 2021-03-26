@@ -10,8 +10,7 @@ export default class MessageSendComponent {
     storyContent: StoryContentModel,
     chanceDice: number | undefined = undefined,
     damageDice: string[] | undefined = undefined,
-    damageRolls: number[] | undefined = undefined,
-    plotPointId: number | undefined = undefined
+    damageRolls: number[] | undefined = undefined
   ) {
     // current message
     const message = [
@@ -26,7 +25,7 @@ export default class MessageSendComponent {
     channel.send(message, file).then((msg) => {
       new ConsoleTimeComponent("Message send ", ANSI_FG_GREEN, "succesful", ANSI_RESET);
       if (storyContent.reactions) {
-        await (storyContent.reactions as StoryReactionsModel[]).forEach(async (rection: StoryReactionsModel) => {
+        (storyContent.reactions as StoryReactionsModel[]).forEach(async (rection: StoryReactionsModel) => {
           if (rection.emoji !== null) await (msg as Message).react(rection.emoji);
         });
       }
@@ -65,7 +64,7 @@ export default class MessageSendComponent {
         counter++;
         return rollMessage;
       }),
-      `Totaal damage: **${totalDamage}**\n`,
+      `Total damage: **${totalDamage}**\n`,
     ].join("");
 
     return message;

@@ -1,6 +1,10 @@
 import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
-import { ANSI_RESET, ANSI_FG_CYAN, ANSI_FG_MAGENTA } from "../resources/ANSIEscapeCode";
+import {
+  ANSI_RESET,
+  ANSI_FG_CYAN,
+  ANSI_FG_MAGENTA,
+} from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import MessageSendComponent from "./MessageSendComponent";
 import StoryContentModel from "../models/StoryContentModel";
@@ -9,9 +13,16 @@ import StoryReactionsModel from "../models/StoryReactionsModel";
 export default class MessageNextComponent {
   public highestVoteEmoji = "";
   public plotPointId = 0;
+  public storyEnd = false;
+  public channel: TextChannel | DMChannel | GroupDMChannel;
 
-  constructor(message: Message, plotPointId: number) {
+  constructor(
+    message: Message,
+    plotPointId: number,
+    channel: TextChannel | DMChannel | GroupDMChannel
+  ) {
     this.plotPointId = plotPointId;
+    this.channel = channel;
     let currentHighestCount: number | undefined = undefined;
     message.reactions.map((reaction) => {
       if (reaction.me) {
@@ -34,22 +45,26 @@ export default class MessageNextComponent {
       }
     });
 
-    this.nextStoryContent(message.channel, this.currentPlotPointResult());
+    const currentPlotPointResult = this.currentPlotPointResult();
 
-    new ConsoleTimeComponent(
-      ANSI_FG_CYAN,
-      `Plot Point `,
-      ANSI_RESET,
-      ANSI_FG_MAGENTA,
-      `${plotPointId} `,
-      ANSI_RESET,
-      "of ",
-      ANSI_FG_MAGENTA,
-      `${message.id} `,
-      ANSI_RESET,
-      "has chosen ",
-      `${this.highestVoteEmoji} `
-    );
+    if(!this.storyEnd){
+      this.nextStoryContent(message.channel, currentPlotPointResult);
+
+      new ConsoleTimeComponent(
+        ANSI_FG_CYAN,
+        `Plot Point `,
+        ANSI_RESET,
+        ANSI_FG_MAGENTA,
+        `${plotPointId} `,
+        ANSI_RESET,
+        "of ",
+        ANSI_FG_MAGENTA,
+        `${message.id} `,
+        ANSI_RESET,
+        "has chosen ",
+        `${this.highestVoteEmoji} `
+      );
+    }
   }
   public valueOf = (): void => {
     return;
@@ -65,6 +80,7 @@ export default class MessageNextComponent {
     Store.Stories.map((story) =>
       story.plotPoints.map((plotPoint) => {
         if (plotPoint.plotPointId === this.plotPointId) {
+          if(!plotPoint.reactions) return this.storyEnd = true;
           (plotPoint.reactions as StoryReactionsModel[]).map((reaction) => {
             if (reaction.emoji === this.highestVoteEmoji) {
               deathId = reaction.next.deathId;
@@ -77,6 +93,7 @@ export default class MessageNextComponent {
         }
       })
     );
+
     return { deathId, rollAtLeast, rollFailId, rollDamage, rollSuccessId };
   };
 
@@ -92,7 +109,7 @@ export default class MessageNextComponent {
 
     Store.Stories.map((story) => {
       let currentPlotPointId = this.plotPointId;
-      
+
       story.plotPoints.map((plotPoint) => {
         if (plotPoint.plotPointId === this.plotPointId) {
           if (
@@ -138,8 +155,7 @@ export default class MessageNextComponent {
       nextStoryContent,
       chanceDice,
       damageDice,
-      damageRolls,
-      this.plotPointId
+      damageRolls
     );
 
     return nextStoryContent;

@@ -2,12 +2,13 @@ import { Client, Message } from "discord.js";
 import Store from "../store/Store";
 import StartCommand from "../commands/StartCommand";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
-import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_CYAN } from "../resources/ANSIEscapeCode";
+import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_CYAN, ANSI_FG_GREEN, ANSI_FG_MAGENTA } from "../resources/ANSIEscapeCode";
 import MessageNextComponent from "./MessageNextComponent";
+import StoryContentModel from "../models/StoryContentModel";
 
 export default class MessageComponent {
   public env = {} as Record<string, unknown>;
-  public storyEnd = false;
+  public plotpoint = {} as StoryContentModel;
 
   constructor(client: Client, env: Record<string, unknown>) {
     this.env = env;
@@ -22,43 +23,45 @@ export default class MessageComponent {
   }
 
   private botMessageResponse = (message: Message) => {
-    // Listen for the bot
-    if(Store.PlotPointCount[Store.PlotPointCount.length - 1].channelId === undefined) {
-      Store.PlotPointCount[Store.PlotPointCount.length - 1].channelId = message.channel;
-    }
 
-    if (!this.storyEnd) {
-      Store.Stories.map((story) => {
-        story.plotPoints.map((plotPoint) => {
-          if (
-            plotPoint.plotPointId ===
-            Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId
-          ) {
-            if (plotPoint.reactions) {
-              setTimeout(
-                () =>
-                  message.channel.fetchMessage(message.id).then((fetchMessage) => {
-                    const next = new MessageNextComponent(
-                      fetchMessage,
-                      Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId
-                    );
-                    Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId =
-                      next.plotPointId;
-                  }),
-                this.env.TIME ? parseInt(this.env.TIME as string) : 10000
-              ); // MiliSeconds
-            } else {
-              this.storyEnd = true;
-              message.channel.send(
-                `\n---------------------------------------------------------------------\nThe story has ended. Restart the story to see other endings\n---------------------------------------------------------------------`
-              );
-            }
-          }
-        });
-      });
-    } else {
-      this.storyEnd = false;
+    // Listen for the bot
+    if (Store.PlotPointCount[Store.PlotPointCount.length - 1].channel === undefined) {
+      Store.PlotPointCount[Store.PlotPointCount.length - 1].channel = message.channel;
     }
+    
+    Store.PlotPointCount.map((ppc) => {
+      if (ppc.channel === message.channel) {
+        setTimeout(
+          () => {
+            message.channel.fetchMessage(message.id).then((msg) => {
+              const next = new MessageNextComponent(msg, ppc.plotPointId, ppc.channel);
+              ppc.plotPointId = next.plotPointId;
+            });
+          },
+          this.env.TIME ? parseInt(this.env.TIME as string) : 10000
+        ); // MiliSeconds
+      }
+      // if(!ppc.storyEnded) {
+      //   ppc.storyEnded = true;
+      //   message.channel.send(
+      //     `\n---------------------------------------------------------------------\nThe story has ended. Restart the story to see other endings\n---------------------------------------------------------------------`
+      //   );
+      //   new ConsoleTimeComponent(
+      //     `Story `,
+      //     ANSI_FG_GREEN,
+      //     `${ppc.storyId.toUpperCase()} `,
+      //     ANSI_RESET,
+      //     "has reached an end on plotpoint ",
+      //     ANSI_FG_MAGENTA,
+      //     `${ppc.plotPointId} `,
+      //     ANSI_RESET,
+      //     "on channel ",
+      //     ANSI_FG_MAGENTA,
+      //     `${message.channel.id} `,
+      //     ANSI_RESET,
+      //   );
+      // }
+    });
   };
 
   private userMessageResponse = (message: Message) => {
