@@ -5,6 +5,7 @@
   "plotPoints": [
     {
       "content": "This is the start of the story! You start in a cave with a sword and shield. You can go left or right. Choose 1️⃣ for left and 2️⃣ for right",
+      "file_destination": "https://miro.medium.com/max/750/1*phyURx2pCUQs7PpsJ4WKFw.jpeg",
       "plotPointId": 0,
       "reactions": [
         {
@@ -31,6 +32,7 @@
     },
     {
       "content": "You see the exit in the distance! but there is a evil monster in front of it. Choose 1️⃣ to fight (1d20 roll, roll higher then a 12) and 2️⃣ to run away!",
+      "file_destination": null,
       "plotPointId": 1,
       "reactions": [
         {
@@ -57,16 +59,19 @@
     },
     {
       "content": "Oh no! you fell inside a spiked pitt and instantly died! Beter luck next time!",
+      "file_destination": "https://giantbomb1.cbsistatic.com/uploads/scale_medium/0/2175/188104-thepit.png",
       "plotPointId": 2,
       "reactions": false
     },
     {
       "content": "You slashed the evil monster and it died. You can savely leave the cave! Congratulations!",
+      "file_destination": null,
       "plotPointId": 3,
       "reactions": false
     },
     {
       "content": "You missed your attack! The monster got a hit on you! Choose 1️⃣ to fight again (1d20 roll, roll higher then a 12) and 2️⃣ to run away!",
+      "file_destination": null,
       "plotPointId": 4,
       "reactions": [
         {
