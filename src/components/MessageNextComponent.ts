@@ -1,18 +1,15 @@
 import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
-import {
-  ANSI_RESET,
-  ANSI_FG_CYAN,
-  ANSI_FG_MAGENTA,
-} from "../resources/ANSIEscapeCode";
+import { ANSI_RESET, ANSI_FG_CYAN, ANSI_FG_MAGENTA } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import MessageSendComponent from "./MessageSendComponent";
-import StoryContentModel from "../models/StoryContentModel";
+import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 import StoryReactionsModel from "../models/StoryReactionsModel";
 
 export default class MessageNextComponent {
   public highestVoteEmoji = "";
   public plotPointId = 0;
+  public currentPlotPoint = {} as StoryPlotPointsModel;
   public storyEnd = false;
   public channel: TextChannel | DMChannel | GroupDMChannel;
 
@@ -23,6 +20,40 @@ export default class MessageNextComponent {
   ) {
     this.plotPointId = plotPointId;
     this.channel = channel;
+
+    this.checkHighestVoteEmoji(message);
+    this.initPlotPoint();
+    const currentPlotPointResult = this.currentPlotPointResult();
+
+    if (!this.storyEnd) {
+      this.nextStoryPlotPoint(message.channel, currentPlotPointResult);
+
+      new ConsoleTimeComponent(
+        ANSI_FG_CYAN,
+        `Plot Point `,
+        ANSI_RESET,
+        ANSI_FG_MAGENTA,
+        `${plotPointId} `,
+        ANSI_RESET,
+        "of ",
+        ANSI_FG_MAGENTA,
+        `${message.id} `,
+        ANSI_RESET,
+        "of channel ",
+        ANSI_FG_MAGENTA,
+        `${message.channel.id} `,
+        ANSI_RESET,
+        "has chosen ",
+        `${this.highestVoteEmoji} `
+      );
+    }
+  }
+
+  public valueOf = (): void => {
+    return;
+  };
+
+  public checkHighestVoteEmoji = (message: Message): void => {
     let currentHighestCount: number | undefined = undefined;
     message.reactions.map((reaction) => {
       if (reaction.me) {
@@ -44,30 +75,16 @@ export default class MessageNextComponent {
         }
       }
     });
+  };
 
-    const currentPlotPointResult = this.currentPlotPointResult();
-
-    if(!this.storyEnd){
-      this.nextStoryContent(message.channel, currentPlotPointResult);
-
-      new ConsoleTimeComponent(
-        ANSI_FG_CYAN,
-        `Plot Point `,
-        ANSI_RESET,
-        ANSI_FG_MAGENTA,
-        `${plotPointId} `,
-        ANSI_RESET,
-        "of ",
-        ANSI_FG_MAGENTA,
-        `${message.id} `,
-        ANSI_RESET,
-        "has chosen ",
-        `${this.highestVoteEmoji} `
-      );
-    }
-  }
-  public valueOf = (): void => {
-    return;
+  private initPlotPoint = () => {
+    Store.Stories.map((story) =>
+      story.plotPoints.map((plotPoint) => {
+        if (plotPoint.plotPointId === this.plotPointId) {
+          this.currentPlotPoint = plotPoint;
+        }
+      })
+    );
   };
 
   public currentPlotPointResult = (): Record<string, unknown> => {
@@ -77,88 +94,91 @@ export default class MessageNextComponent {
     let rollFailId: number | null = null;
     let rollSuccessId = 0;
 
-    Store.Stories.map((story) =>
-      story.plotPoints.map((plotPoint) => {
-        if (plotPoint.plotPointId === this.plotPointId) {
-          if(!plotPoint.reactions) return this.storyEnd = true;
-          (plotPoint.reactions as StoryReactionsModel[]).map((reaction) => {
-            if (reaction.emoji === this.highestVoteEmoji) {
-              deathId = reaction.next.deathId;
-              rollAtLeast = reaction.next.rollAtLeast;
-              rollDamage = reaction.next.rollDamage;
-              rollFailId = reaction.next.rollFailId;
-              rollSuccessId = reaction.next.rollSuccessId;
-            }
-          });
-        }
-      })
-    );
+    if (!this.currentPlotPoint.reactions) {
+      this.storyEnd = true;
+      return {};
+    }
+    (this.currentPlotPoint.reactions as StoryReactionsModel[]).map((reaction) => {
+      if (reaction.emoji === this.highestVoteEmoji) {
+        deathId = reaction.next.deathId;
+        rollAtLeast = reaction.next.rollAtLeast;
+        rollDamage = reaction.next.rollDamage;
+        rollFailId = reaction.next.rollFailId;
+        rollSuccessId = reaction.next.rollSuccessId;
+      }
+    });
 
     return { deathId, rollAtLeast, rollFailId, rollDamage, rollSuccessId };
   };
 
-  public nextStoryContent = (
+  public nextStoryPlotPoint = (
     channel: TextChannel | DMChannel | GroupDMChannel,
     currentPlotPointResult: Record<string, unknown>
-  ): StoryContentModel => {
-    let nextStoryContent = {} as StoryContentModel;
+  ): StoryPlotPointsModel => {
+    let nextStoryPlotPoint = {} as StoryPlotPointsModel;
     let chanceDice: number | undefined = undefined;
     let damageDice: string[] | undefined = undefined;
     let damageRolls: number[] | undefined = undefined;
     let nextStoryId: number;
 
-    Store.Stories.map((story) => {
-      let currentPlotPointId = this.plotPointId;
+    if (
+      currentPlotPointResult.deathId !== null &&
+      currentPlotPointResult.rollAtLeast !== null &&
+      currentPlotPointResult.rollDamage !== null &&
+      currentPlotPointResult.rollFailId !== null
+    ) {
+      chanceDice = this.getRandomInt(20);
+      if (chanceDice >= (currentPlotPointResult.rollAtLeast as number)) {
+        nextStoryId = currentPlotPointResult.rollSuccessId as number;
+      } else {
+        damageDice = (currentPlotPointResult.rollDamage as string).split("d");
+        damageRolls = [];
 
-      story.plotPoints.map((plotPoint) => {
-        if (plotPoint.plotPointId === this.plotPointId) {
-          if (
-            currentPlotPointResult.deathId !== null &&
-            currentPlotPointResult.rollAtLeast !== null &&
-            currentPlotPointResult.rollDamage !== null &&
-            currentPlotPointResult.rollFailId !== null
-          ) {
-            chanceDice = this.getRandomInt(20);
-            if (chanceDice >= (currentPlotPointResult.rollAtLeast as number)) {
-              nextStoryId = currentPlotPointResult.rollSuccessId as number;
+        for (let i = 0; i < parseInt(damageDice[0]); i++) {
+          damageRolls.push(this.getRandomInt(parseInt(damageDice[1])));
+        }
+        nextStoryId = Store.PlotProgression.map((progression): number => {
+          let progressionStoryId = 0;
+          if (progression.channel === channel) {
+            progression.hitpoints -= (damageRolls as number[]).reduce((a, b) => a + b, 0);
+
+            if (progression.hitpoints <= 0) {
+              progressionStoryId = currentPlotPointResult.deathId as number;
             } else {
-              damageDice = (currentPlotPointResult.rollDamage as string).split("d");
-              damageRolls = [];
-
-              for (let i = 0; i < parseInt(damageDice[0]); i++) {
-                damageRolls.push(this.getRandomInt(parseInt(damageDice[1])));
-              }
-              story.hitpoints -= damageRolls.reduce((a, b) => a + b, 0);
-
-              if (story.hitpoints <= 0) {
-                nextStoryId = currentPlotPointResult.deathId as number;
-              } else {
-                nextStoryId = currentPlotPointResult.rollFailId as number;
-              }
+              progressionStoryId = currentPlotPointResult.rollFailId as number;
             }
-          } else {
-            nextStoryId = currentPlotPointResult.rollSuccessId as number;
           }
-          story.plotPoints.map((plotPoint) => {
-            if (plotPoint.plotPointId === nextStoryId) {
-              nextStoryContent = plotPoint;
-              currentPlotPointId = nextStoryId;
-            }
-          });
+          return progressionStoryId as number;
+        })[0];
+      }
+    } else {
+      nextStoryId = currentPlotPointResult.rollSuccessId as number;
+    }
+
+    Store.Stories.map((story) => {
+      story.plotPoints.map((pp) => {
+        if (pp.plotPointId === nextStoryId) {
+          nextStoryPlotPoint = {
+            content: pp.content,
+            fileDestination: pp.fileDestination,
+            plotPointId: pp.plotPointId,
+            reactions: pp.reactions,
+          } as StoryPlotPointsModel;
         }
       });
-
-      this.plotPointId = currentPlotPointId;
     });
+
+    this.plotPointId = nextStoryId;
+
     new MessageSendComponent(
       channel,
-      nextStoryContent,
+      nextStoryPlotPoint,
       chanceDice,
       damageDice,
       damageRolls
     );
 
-    return nextStoryContent;
+    return nextStoryPlotPoint;
   };
 
   public randomChoice = (arr: string[]): string => {

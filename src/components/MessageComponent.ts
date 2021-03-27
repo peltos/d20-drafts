@@ -2,13 +2,19 @@ import { Client, Message } from "discord.js";
 import Store from "../store/Store";
 import StartCommand from "../commands/StartCommand";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
-import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_CYAN, ANSI_FG_GREEN, ANSI_FG_MAGENTA } from "../resources/ANSIEscapeCode";
+import {
+  ANSI_RESET,
+  ANSI_FG_RED,
+  ANSI_FG_CYAN,
+  ANSI_FG_GREEN,
+  ANSI_FG_MAGENTA,
+} from "../resources/ANSIEscapeCode";
 import MessageNextComponent from "./MessageNextComponent";
-import StoryContentModel from "../models/StoryContentModel";
+import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class MessageComponent {
   public env = {} as Record<string, unknown>;
-  public plotpoint = {} as StoryContentModel;
+  public plotpoint = {} as StoryPlotPointsModel;
 
   constructor(client: Client, env: Record<string, unknown>) {
     this.env = env;
@@ -23,44 +29,53 @@ export default class MessageComponent {
   }
 
   private botMessageResponse = (message: Message) => {
-
     // Listen for the bot
-    if (Store.PlotPointCount[Store.PlotPointCount.length - 1].channel === undefined) {
-      Store.PlotPointCount[Store.PlotPointCount.length - 1].channel = message.channel;
+    if (Store.PlotProgression[Store.PlotProgression.length - 1].channel === undefined) {
+      Store.PlotProgression[Store.PlotProgression.length - 1].channel = message.channel;
     }
-    
-    Store.PlotPointCount.map((ppc) => {
-      if (ppc.channel === message.channel) {
+
+    Store.PlotProgression.map((progression) => {
+      if (progression.channel === message.channel) {
         setTimeout(
           () => {
             message.channel.fetchMessage(message.id).then((msg) => {
-              const next = new MessageNextComponent(msg, ppc.plotPointId, ppc.channel);
-              ppc.plotPointId = next.plotPointId;
+              const next = new MessageNextComponent(msg, progression.plotPointId, progression.channel);
+              progression.plotPointId = next.plotPointId;
             });
           },
           this.env.TIME ? parseInt(this.env.TIME as string) : 10000
         ); // MiliSeconds
+
+        if (!progression.storyEnded) {
+          Store.Stories.map((story) =>
+            story.plotPoints.map((plotPoint) => {
+              if (plotPoint.plotPointId === progression.plotPointId && !plotPoint.reactions) {
+                progression.storyEnded = true;
+
+                setTimeout(() => {
+                  progression.channel.send(
+                    `\n---------------------------------------------------------------------\nThe story has ended. Restart the story to see other endings\n---------------------------------------------------------------------`
+                  );
+                  new ConsoleTimeComponent(
+                    `Story `,
+                    ANSI_FG_GREEN,
+                    `${story.storyId.toUpperCase()} `,
+                    ANSI_RESET,
+                    "has ",
+                    ANSI_FG_RED,
+                    `ended `.toUpperCase(),
+                    ANSI_RESET,
+                    "on channel ",
+                    ANSI_FG_MAGENTA,
+                    `${message.channel.id} `,
+                    ANSI_RESET
+                  );
+                }, 100);
+              }
+            })
+          );
+        }
       }
-      // if(!ppc.storyEnded) {
-      //   ppc.storyEnded = true;
-      //   message.channel.send(
-      //     `\n---------------------------------------------------------------------\nThe story has ended. Restart the story to see other endings\n---------------------------------------------------------------------`
-      //   );
-      //   new ConsoleTimeComponent(
-      //     `Story `,
-      //     ANSI_FG_GREEN,
-      //     `${ppc.storyId.toUpperCase()} `,
-      //     ANSI_RESET,
-      //     "has reached an end on plotpoint ",
-      //     ANSI_FG_MAGENTA,
-      //     `${ppc.plotPointId} `,
-      //     ANSI_RESET,
-      //     "on channel ",
-      //     ANSI_FG_MAGENTA,
-      //     `${message.channel.id} `,
-      //     ANSI_RESET,
-      //   );
-      // }
     });
   };
 

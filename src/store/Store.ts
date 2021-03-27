@@ -1,7 +1,7 @@
 import StoryModel from "../models/StoryModel";
-import PlotPointCountModel from "../models/PlotPointCountModel";
+import PlotProgressionModel from "../models/PlotProgressionModel";
 
 export default class Store {
   public static Stories: StoryModel[] = [];
-  public static PlotPointCount: PlotPointCountModel[] = [];
+  public static PlotProgression: PlotProgressionModel[] = [];
 }

@@ -4,15 +4,15 @@ import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
 import { ANSI_RESET, ANSI_FG_YELLOW, ANSI_FG_RED, ANSI_FG_GREEN, ANSI_FG_MAGENTA } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
-import PlotPointCountModel from "../models/PlotPointCountModel";
+import PlotProgressionModel from "../models/PlotProgressionModel";
 import MessageSendComponent from "../components/MessageSendComponent";
-import StoryContentModel from "../models/StoryContentModel";
+import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class StartCommand {
   constructor(message: Message, storyId: string, storyPlotPoint: string) {
     new ConsoleTimeComponent(ANSI_FG_YELLOW, "START ", ANSI_RESET, "command activated");
     const currrentStoryPlotPoint = storyPlotPoint ? parseInt(storyPlotPoint) : 0;
-    let selectedPlotPoint = {} as StoryContentModel;
+    let selectedPlotPoint = {} as StoryPlotPointsModel;
 
     let folder: string[];
     let currentStory = {} as StoryModel;
@@ -58,11 +58,10 @@ export default class StartCommand {
           storyId: currentStory.storyId,
           plotPointId: selectedPlotPoint.plotPointId,
           storyEnded: false,
-        } as PlotPointCountModel;
+          hitpoints: currentStory.hitpoints
+        } as PlotProgressionModel;
 
-        console.log(currentReactionCount);
-
-        Store.PlotPointCount.push(currentReactionCount);
+        Store.PlotProgression.push(currentReactionCount);
         Store.Stories.push(currentStory);
       } catch (err) {
         new ConsoleTimeComponent(ANSI_FG_RED, "No files detected", ANSI_RESET);
@@ -78,7 +77,11 @@ export default class StartCommand {
         ANSI_FG_GREEN,
         `${currentStory.storyId.toUpperCase()} `,
         ANSI_RESET,
-        "has started on channel ",
+        "has ",
+        ANSI_FG_GREEN,
+        `started `.toUpperCase(),
+        ANSI_RESET,
+        "on channel ",
         ANSI_FG_MAGENTA,
         `${message.channel.id} `,
         ANSI_RESET,

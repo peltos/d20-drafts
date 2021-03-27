@@ -2,19 +2,19 @@ import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
 import { ANSI_RESET, ANSI_FG_GREEN } from "../resources/ANSIEscapeCode";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
 import StoryReactionsModel from "../models/StoryReactionsModel";
-import StoryContentModel from "../models/StoryContentModel";
+import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class MessageSendComponent {
   constructor(
     channel: TextChannel | DMChannel | GroupDMChannel,
-    storyContent: StoryContentModel,
+    storyContent: StoryPlotPointsModel,
     chanceDice: number | undefined = undefined,
     damageDice: string[] | undefined = undefined,
     damageRolls: number[] | undefined = undefined
   ) {
     // current message
     const message = [
-      this.DiceRolled(chanceDice, damageDice, damageRolls),
+      this.diceRolled(chanceDice, damageDice, damageRolls),
       storyContent.content,
     ].join("");
     
@@ -31,9 +31,9 @@ export default class MessageSendComponent {
       }
     });
   }
-  private DiceRolled = (
+  private diceRolled = (
     chanceDice: number | undefined,
-    damageDice: string[] | undefined = undefined,
+    damageDice: string[] | undefined,
     damageRolls: number[] | undefined
   ) => {
     if (chanceDice === undefined) return "";
@@ -41,14 +41,14 @@ export default class MessageSendComponent {
     const message = [
       "----------------------\n",
       `Dice rolled: **${chanceDice}**\n`,
-      this.DamageRolls(damageDice, damageRolls),
+      damageDice !== undefined && damageRolls !== undefined  ? this.damageRolls(damageDice, damageRolls) : '  **Success!**  \n',
       "----------------------\n",
     ].join("");
 
     return message;
   };
 
-  private DamageRolls = (
+  private damageRolls = (
     damageDice: string[] | undefined = undefined,
     damageRolls: number[] | undefined
   ) => {
@@ -57,6 +57,7 @@ export default class MessageSendComponent {
     const totalDamage = damageRolls.reduce((a, b) => a + b, 0);
 
     const message = [
+      "  **Failed...**  \n",
       "\n",
       `Damage: **${damageDice[0]}d${damageDice[1]}**\n`,
       damageRolls.map((roll) => {
@@ -65,6 +66,8 @@ export default class MessageSendComponent {
         return rollMessage;
       }),
       `Total damage: **${totalDamage}**\n`,
+      "----------------------\n",
+      `Total Health left: **${totalDamage}**\n`
     ].join("");
 
     return message;
