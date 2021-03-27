@@ -88,7 +88,6 @@ export default class MessageComponent {
         counter++;
       });
     }
-    console.log(Store);
   };
 
   private userMessageResponse = (message: Message) => {
