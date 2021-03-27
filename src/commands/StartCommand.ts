@@ -62,7 +62,18 @@ export default class StartCommand {
         } as PlotProgressionModel;
 
         Store.PlotProgression.push(currentReactionCount);
-        Store.Stories.push(currentStory);
+
+        let storyExist = false
+        Store.Stories.map((story) => {
+          if(story.storyId === currentStory.storyId){
+            storyExist = true;
+            story = currentStory;
+          }
+        })
+        if(!storyExist) {
+          Store.Stories.push(currentStory);
+        }
+        
       } catch (err) {
         new ConsoleTimeComponent(ANSI_FG_RED, "No files detected", ANSI_RESET);
       }

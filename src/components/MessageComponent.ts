@@ -30,53 +30,65 @@ export default class MessageComponent {
 
   private botMessageResponse = (message: Message) => {
     // Listen for the bot
-    if (Store.PlotProgression[Store.PlotProgression.length - 1].channel === undefined) {
-      Store.PlotProgression[Store.PlotProgression.length - 1].channel = message.channel;
-    }
-
-    Store.PlotProgression.map((progression) => {
-      if (progression.channel === message.channel) {
-        setTimeout(
-          () => {
-            message.channel.fetchMessage(message.id).then((msg) => {
-              const next = new MessageNextComponent(msg, progression.plotPointId, progression.channel);
-              progression.plotPointId = next.plotPointId;
-            });
-          },
-          this.env.TIME ? parseInt(this.env.TIME as string) : 10000
-        ); // MiliSeconds
-
-        if (!progression.storyEnded) {
-          Store.Stories.map((story) =>
-            story.plotPoints.map((plotPoint) => {
-              if (plotPoint.plotPointId === progression.plotPointId && !plotPoint.reactions) {
-                progression.storyEnded = true;
-
-                setTimeout(() => {
-                  progression.channel.send(
-                    `\n---------------------------------------------------------------------\nThe story has ended. Restart the story to see other endings\n---------------------------------------------------------------------`
-                  );
-                  new ConsoleTimeComponent(
-                    `Story `,
-                    ANSI_FG_GREEN,
-                    `${story.storyId.toUpperCase()} `,
-                    ANSI_RESET,
-                    "has ",
-                    ANSI_FG_RED,
-                    `ended `.toUpperCase(),
-                    ANSI_RESET,
-                    "on channel ",
-                    ANSI_FG_MAGENTA,
-                    `${message.channel.id} `,
-                    ANSI_RESET
-                  );
-                }, 100);
-              }
-            })
-          );
-        }
+    if (Store.PlotProgression.length !== 0) {
+      if (Store.PlotProgression[Store.PlotProgression.length - 1].channel === undefined) {
+        Store.PlotProgression[Store.PlotProgression.length - 1].channel = message.channel;
       }
-    });
+      let counter = 0;
+      Store.PlotProgression.map((progression) => {
+        if (progression.channel === message.channel) {
+          setTimeout(
+            () => {
+              message.channel.fetchMessage(message.id).then((msg) => {
+                const next = new MessageNextComponent(
+                  msg,
+                  progression.plotPointId,
+                  progression.channel
+                );
+                progression.plotPointId = next.plotPointId;
+              });
+            },
+            this.env.TIME ? parseInt(this.env.TIME as string) : 10000
+          ); // MiliSeconds
+
+          if (!progression.storyEnded) {
+            Store.Stories.map((story) =>
+              story.plotPoints.map((plotPoint) => {
+                if (
+                  plotPoint.plotPointId === progression.plotPointId &&
+                  !plotPoint.reactions
+                ) {
+                  progression.storyEnded = true;
+
+                  setTimeout(() => {
+                    progression.channel.send(
+                      `\n---------------------------------------------------------------------\nThe story has ended. Restart the story to see other endings\n---------------------------------------------------------------------`
+                    );
+                    new ConsoleTimeComponent(
+                      `Story `,
+                      ANSI_FG_GREEN,
+                      `${story.storyId.toUpperCase()} `,
+                      ANSI_RESET,
+                      "has ",
+                      ANSI_FG_RED,
+                      `ended `.toUpperCase(),
+                      ANSI_RESET,
+                      "on channel ",
+                      ANSI_FG_MAGENTA,
+                      `${message.channel.id} `,
+                      ANSI_RESET
+                    );
+                  }, 100);
+                  Store.PlotProgression.splice(counter, 1);
+                }
+              })
+            );
+          }
+        }
+        counter++;
+      });
+    }
+    console.log(Store);
   };
 
   private userMessageResponse = (message: Message) => {
