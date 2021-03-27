@@ -23,14 +23,24 @@ export default class MessageSendComponent {
     const file = storyContent.fileDestination !== null ? {files: [storyContent.fileDestination]} : undefined;
 
     channel.send(message, file).then((msg) => {
-      new ConsoleTimeComponent("Message send ", ANSI_FG_GREEN, "succesful", ANSI_RESET);
+      new ConsoleTimeComponent("Message send succesful");
+      console.log(storyContent);
       if (storyContent.reactions) {
-        (storyContent.reactions as StoryReactionsModel[]).forEach(async (rection: StoryReactionsModel) => {
-          if (rection.emoji !== null) await (msg as Message).react(rection.emoji);
-        });
+        const reactions = storyContent.reactions;
+        this.recursiveReaction(msg as Message, reactions as StoryReactionsModel[]);
+        
       }
     });
   }
+
+  private recursiveReaction(msg: Message, reactions: StoryReactionsModel[], count = 0) {
+    const currentReaction = reactions[count];
+    msg.react((currentReaction as StoryReactionsModel).emoji).then(() => {
+      count++
+      if(reactions.length !== 0) this.recursiveReaction(msg, reactions, count)
+    });
+  }
+
   private diceRolled = (
     chanceDice: number | undefined,
     damageDice: string[] | undefined,
