@@ -58,13 +58,13 @@
       ]
     },
     {
-      "content": "Oh no! You fell inside a spiked pit and did not make it out alive... Beter luck next time! Choose 1️⃣ to reset the story.",
+      "content": "Oh no! You fell inside a spiked pit and did not make it out alive... Beter luck next time!",
       "fileDestination": "https://giantbomb1.cbsistatic.com/uploads/scale_medium/0/2175/188104-thepit.png",
       "plotPointId": 2,
       "reactions": false
     },
     {
-      "content": "You slashed the evil monster and it died. You can savely leave the cave, Congratulations! Choose 1️⃣ to reset the story.",
+      "content": "You slashed the evil monster and it died. You can savely leave the cave, Congratulations!",
       "fileDestination": null,
       "plotPointId": 3,
       "reactions": false
