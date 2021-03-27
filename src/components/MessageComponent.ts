@@ -2,48 +2,89 @@ import { Client, Message } from "discord.js";
 import Store from "../store/Store";
 import StartCommand from "../commands/StartCommand";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
-import { ANSI_RESET, ANSI_FG_RED, ANSI_FG_CYAN } from "../resources/ANSIEscapeCode";
+import {
+  ANSI_RESET,
+  ANSI_FG_RED,
+  ANSI_FG_CYAN,
+  ANSI_FG_GREEN,
+  ANSI_FG_MAGENTA,
+} from "../resources/ANSIEscapeCode";
 import MessageNextComponent from "./MessageNextComponent";
+import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class MessageComponent {
-
-  public message = {} as Message;
   public env = {} as Record<string, unknown>;
+  public plotpoint = {} as StoryPlotPointsModel;
 
   constructor(client: Client, env: Record<string, unknown>) {
     this.env = env;
     // When A message is sent
     client.on("message", async (message) => {
-      this.message = message;
       if (message.author.bot) {
-        this.botMessageResponse();
+        this.botMessageResponse(message);
       } else {
-        this.userMessageResponse();
+        this.userMessageResponse(message);
       }
     });
   }
 
-  private botMessageResponse = () => {
+  private botMessageResponse = (message: Message) => {
     // Listen for the bot
-    Store.PlotPointCount[Store.PlotPointCount.length - 1].messageId = this.message.id;
-    setTimeout(() => {
-      this.message.channel.fetchMessage(this.message.id).then((fetchMessage) => {
-        const next = new MessageNextComponent(
-          fetchMessage,
-          Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId
-        );
-        Store.PlotPointCount[Store.PlotPointCount.length - 1].plotPointId =
-          next.plotPointId;
-      });
-    }, this.env.TIME ? parseInt(this.env.TIME as string) : 10000); // MiliSeconds
+    if (Store.PlotProgression[Store.PlotProgression.length - 1].channel === undefined) {
+      Store.PlotProgression[Store.PlotProgression.length - 1].channel = message.channel;
+    }
+
+    Store.PlotProgression.map((progression) => {
+      if (progression.channel === message.channel) {
+        setTimeout(
+          () => {
+            message.channel.fetchMessage(message.id).then((msg) => {
+              const next = new MessageNextComponent(msg, progression.plotPointId, progression.channel);
+              progression.plotPointId = next.plotPointId;
+            });
+          },
+          this.env.TIME ? parseInt(this.env.TIME as string) : 10000
+        ); // MiliSeconds
+
+        if (!progression.storyEnded) {
+          Store.Stories.map((story) =>
+            story.plotPoints.map((plotPoint) => {
+              if (plotPoint.plotPointId === progression.plotPointId && !plotPoint.reactions) {
+                progression.storyEnded = true;
+
+                setTimeout(() => {
+                  progression.channel.send(
+                    `\n---------------------------------------------------------------------\nThe story has ended. Restart the story to see other endings\n---------------------------------------------------------------------`
+                  );
+                  new ConsoleTimeComponent(
+                    `Story `,
+                    ANSI_FG_GREEN,
+                    `${story.storyId.toUpperCase()} `,
+                    ANSI_RESET,
+                    "has ",
+                    ANSI_FG_RED,
+                    `ended `.toUpperCase(),
+                    ANSI_RESET,
+                    "on channel ",
+                    ANSI_FG_MAGENTA,
+                    `${message.channel.id} `,
+                    ANSI_RESET
+                  );
+                }, 100);
+              }
+            })
+          );
+        }
+      }
+    });
   };
 
-  private userMessageResponse = () => {
+  private userMessageResponse = (message: Message) => {
     // Check if a command is used
-    if (!this.message.content.startsWith("!")) return;
+    if (!message.content.startsWith("!")) return;
 
     // Prepare the command
-    const commandBody = this.message.content.slice(("!").length);
+    const commandBody = message.content.slice("!".length);
     const args = commandBody.split(" ");
 
     if (args.shift() !== "d20d") return;
@@ -61,7 +102,7 @@ export default class MessageComponent {
     // Commands
     switch (command) {
       case "start":
-        new StartCommand(this.message, args[0], args[1]);
+        new StartCommand(message, args[0], args[1]);
         break;
       default:
         new ConsoleTimeComponent(

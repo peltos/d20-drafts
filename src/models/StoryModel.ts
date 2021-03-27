@@ -1,7 +1,8 @@
-import StoryContentModel from "./StoryContentModel";
+import StoryPlotPointsModel from "./StoryPlotPointsModel";
 
 export default interface StoryModel {
   storyId: string;
   name: string;
-  plotPoints: StoryContentModel[];
+  hitpoints: number,
+  plotPoints: StoryPlotPointsModel[];
 }
