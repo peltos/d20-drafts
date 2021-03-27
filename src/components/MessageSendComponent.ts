@@ -17,28 +17,31 @@ export default class MessageSendComponent {
       this.diceRolled(chanceDice, damageDice, damageRolls),
       storyContent.content,
     ].join("");
-    
+
     //send message + image if the fileDestination in example.json is not empty. If the fileDestination
     //is empty, send an undefined opepration. Current image from internet.
-    const file = storyContent.fileDestination !== null ? {files: [storyContent.fileDestination]} : undefined;
+    const file =
+      storyContent.fileDestination !== null
+        ? { files: [storyContent.fileDestination] }
+        : undefined;
 
     channel.send(message, file).then((msg) => {
       new ConsoleTimeComponent("Message send succesful");
-      console.log(storyContent);
       if (storyContent.reactions) {
         const reactions = storyContent.reactions;
         this.recursiveReaction(msg as Message, reactions as StoryReactionsModel[]);
-        
       }
     });
   }
 
   private recursiveReaction(msg: Message, reactions: StoryReactionsModel[], count = 0) {
     const currentReaction = reactions[count];
-    msg.react((currentReaction as StoryReactionsModel).emoji).then(() => {
-      count++
-      if(reactions.length !== 0) this.recursiveReaction(msg, reactions, count)
-    });
+    if (currentReaction !== undefined) {
+      msg.react((currentReaction as StoryReactionsModel).emoji).then(() => {
+        count++;
+        if (reactions.length !== 0) this.recursiveReaction(msg, reactions, count);
+      });
+    }
   }
 
   private diceRolled = (
@@ -51,7 +54,9 @@ export default class MessageSendComponent {
     const message = [
       "----------------------\n",
       `Dice rolled: **${chanceDice}**\n`,
-      damageDice !== undefined && damageRolls !== undefined  ? this.damageRolls(damageDice, damageRolls) : '  **Success!**  \n',
+      damageDice !== undefined && damageRolls !== undefined
+        ? this.damageRolls(damageDice, damageRolls)
+        : "  **Success!**  \n",
       "----------------------\n",
     ].join("");
 
@@ -77,7 +82,7 @@ export default class MessageSendComponent {
       }),
       `Total damage: **${totalDamage}**\n`,
       "----------------------\n",
-      `Total Health left: **${totalDamage}**\n`
+      `Total Health left: **${totalDamage}**\n`,
     ].join("");
 
     return message;
