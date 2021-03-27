@@ -100,14 +100,6 @@ export default class MessageComponent {
 
     if (args.shift() !== "d20d") return;
 
-    // send to console
-    new ConsoleTimeComponent(
-      ANSI_FG_CYAN,
-      "Discord Client Message ",
-      ANSI_RESET,
-      "event"
-    );
-
     const command = args.shift()?.toLowerCase();
 
     // Commands
