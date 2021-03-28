@@ -12,6 +12,7 @@ export default class MessageNextComponent {
   public currentPlotPoint = {} as StoryPlotPointsModel;
   public storyEnd = false;
   public channel: TextChannel | DMChannel | GroupDMChannel;
+  public remainingHp = 0;
 
   constructor(
     message: Message,
@@ -141,6 +142,7 @@ export default class MessageNextComponent {
           let progressionStoryId = 0;
           if (progression.channel === channel) {
             progression.hitpoints -= (damageRolls as number[]).reduce((a, b) => a + b, 0);
+            this.remainingHp = progression.hitpoints;
 
             if (progression.hitpoints <= 0) {
               progressionStoryId = currentPlotPointResult.deathId as number;
@@ -175,7 +177,8 @@ export default class MessageNextComponent {
       nextStoryPlotPoint,
       chanceDice,
       damageDice,
-      damageRolls
+      damageRolls,
+      this.remainingHp
     );
 
     return nextStoryPlotPoint;

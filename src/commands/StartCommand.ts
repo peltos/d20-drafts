@@ -50,6 +50,16 @@ export default class StartCommand {
 
         currentStory.plotPoints.map((plotPoint) => {
           if(plotPoint.plotPointId === currrentStoryPlotPoint){
+            const message = [
+              `---------------------------------\n`,
+              `This is the start of the story **${currentStory.name}** \n`,
+              `You start with **${currentStory.hitpoints}** hitpoint${currentStory.hitpoints > 1 ? 's' : ''} \n`,
+              `Goodluck! \n`,
+              `---------------------------------\n\n`,
+              plotPoint.content
+            ].join("");
+
+            plotPoint.content = message;
             selectedPlotPoint = plotPoint;
           }
         })
@@ -58,7 +68,8 @@ export default class StartCommand {
           storyId: currentStory.storyId,
           plotPointId: selectedPlotPoint.plotPointId,
           storyEnded: false,
-          hitpoints: currentStory.hitpoints
+          hitpoints: currentStory.hitpoints,
+          channel: message.channel
         } as PlotProgressionModel;
 
         Store.PlotProgression.push(currentReactionCount);
@@ -81,7 +92,7 @@ export default class StartCommand {
       new ConsoleTimeComponent(ANSI_FG_RED, "No directory detected", ANSI_RESET);
     }
 
-    if (currentStory) {
+    if (currentStory.storyId) {
       new MessageSendComponent(message.channel, selectedPlotPoint);
       new ConsoleTimeComponent(
         `Story `,

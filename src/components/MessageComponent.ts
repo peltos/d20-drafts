@@ -31,9 +31,6 @@ export default class MessageComponent {
   private botMessageResponse = (message: Message) => {
     // Listen for the bot
     if (Store.PlotProgression.length !== 0) {
-      if (Store.PlotProgression[Store.PlotProgression.length - 1].channel === undefined) {
-        Store.PlotProgression[Store.PlotProgression.length - 1].channel = message.channel;
-      }
       let counter = 0;
       Store.PlotProgression.map((progression) => {
         if (progression.channel === message.channel) {
@@ -91,6 +88,23 @@ export default class MessageComponent {
   };
 
   private userMessageResponse = (message: Message) => {
+    
+    let multipleStoryCheck = false
+    Store.PlotProgression.map((progression) => {
+      if (progression.channel === message.channel) {
+        multipleStoryCheck = true;
+      }
+    })
+
+    if (multipleStoryCheck) {
+      new ConsoleTimeComponent(
+        ANSI_FG_RED,
+        `There is a story in progress on this channel `,
+        ANSI_RESET,
+      );
+      return;
+    }
+
     // Check if a command is used
     if (!message.content.startsWith("!")) return;
 

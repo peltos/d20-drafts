@@ -1,5 +1,4 @@
 import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
-import { ANSI_RESET, ANSI_FG_GREEN } from "../resources/ANSIEscapeCode";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
 import StoryReactionsModel from "../models/StoryReactionsModel";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
@@ -10,11 +9,12 @@ export default class MessageSendComponent {
     storyContent: StoryPlotPointsModel,
     chanceDice: number | undefined = undefined,
     damageDice: string[] | undefined = undefined,
-    damageRolls: number[] | undefined = undefined
+    damageRolls: number[] | undefined = undefined,
+    remainingHp: number | undefined = undefined
   ) {
     // current message
     const message = [
-      this.diceRolled(chanceDice, damageDice, damageRolls),
+      this.diceRolled(chanceDice, damageDice, damageRolls, remainingHp),
       storyContent.content,
     ].join("");
 
@@ -47,7 +47,8 @@ export default class MessageSendComponent {
   private diceRolled = (
     chanceDice: number | undefined,
     damageDice: string[] | undefined,
-    damageRolls: number[] | undefined
+    damageRolls: number[] | undefined,
+    remainingHp: number | undefined
   ) => {
     if (chanceDice === undefined) return "";
 
@@ -55,7 +56,7 @@ export default class MessageSendComponent {
       "----------------------\n",
       `Dice rolled: **${chanceDice}**\n`,
       damageDice !== undefined && damageRolls !== undefined
-        ? this.damageRolls(damageDice, damageRolls)
+        ? this.damageRolls(damageDice, damageRolls, remainingHp)
         : "  **Success!**  \n",
       "----------------------\n",
     ].join("");
@@ -65,7 +66,8 @@ export default class MessageSendComponent {
 
   private damageRolls = (
     damageDice: string[] | undefined = undefined,
-    damageRolls: number[] | undefined
+    damageRolls: number[] | undefined,
+    remainingHp: number | undefined
   ) => {
     if (damageRolls === undefined || damageDice === undefined) return "";
     let counter = 0;
@@ -82,7 +84,7 @@ export default class MessageSendComponent {
       }),
       `Total damage: **${totalDamage}**\n`,
       "----------------------\n",
-      `Total Health left: **${totalDamage}**\n`,
+      `Total Health left: **${remainingHp}**\n`,
     ].join("");
 
     return message;
