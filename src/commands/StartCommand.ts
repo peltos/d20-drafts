@@ -16,6 +16,7 @@ export default class StartCommand {
 
     let folder: string[];
     let currentStory = {} as StoryModel;
+    
 
     if (storyId === undefined) {
       new ConsoleTimeComponent(
@@ -93,7 +94,7 @@ export default class StartCommand {
     }
 
     if (currentStory.storyId) {
-      new MessageSendComponent(message.channel, selectedPlotPoint);
+      new MessageSendComponent(message.channel, selectedPlotPoint,currentStory.parsingVariables);
       new ConsoleTimeComponent(
         `Story `,
         ANSI_FG_GREEN,

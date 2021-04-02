@@ -1,10 +1,13 @@
 {
   "storyId": "example",
   "name": "example story",
+  "parsingVariables":{
+    "charName": "Azrey Arzoth"
+  },
   "hitpoints": 9,
   "plotPoints": [
     {
-      "content": "This is the start of the story! You start in a cave with a sword and shield. You can go left or right. Choose 1️⃣ for left and 2️⃣ for right",
+      "content": "Hello, ::charName::, this is the start of the story! You start in a cave with a sword and shield. You can go left or right. Choose 1️⃣ for left and 2️⃣ for right",
       "fileDestination": "https://miro.medium.com/max/750/1*phyURx2pCUQs7PpsJ4WKFw.jpeg",
       "plotPointId": 0,
       "reactions": [

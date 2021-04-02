@@ -13,11 +13,13 @@ export default class MessageNextComponent {
   public storyEnd = false;
   public channel: TextChannel | DMChannel | GroupDMChannel;
   public remainingHp = 0;
+  public parsingVariables: object 
+  //Q: How can I say that parsingVariables should be passed here as an object, so that I can pass it on to MessageSendComponent
 
   constructor(
     message: Message,
     plotPointId: number,
-    channel: TextChannel | DMChannel | GroupDMChannel
+    channel: TextChannel | DMChannel | GroupDMChannel,
   ) {
     this.plotPointId = plotPointId;
     this.channel = channel;
@@ -175,6 +177,9 @@ export default class MessageNextComponent {
     new MessageSendComponent(
       channel,
       nextStoryPlotPoint,
+      parsingVariables, 
+      //Q: What is happening here? How can I say that this variable should be passed to this class as an object, 
+      //so that it can be sent to MessageSendComponent.
       chanceDice,
       damageDice,
       damageRolls,

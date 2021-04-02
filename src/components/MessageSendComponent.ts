@@ -3,10 +3,13 @@ import ConsoleTimeComponent from "./ConsoleTimeComponent";
 import StoryReactionsModel from "../models/StoryReactionsModel";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
+import JSONStringTemplateParser from "../resources/JSONStringTemplateParser"
+
 export default class MessageSendComponent {
   constructor(
     channel: TextChannel | DMChannel | GroupDMChannel,
     storyContent: StoryPlotPointsModel,
+    templateObjects: object,
     chanceDice: number | undefined = undefined,
     damageDice: string[] | undefined = undefined,
     damageRolls: number[] | undefined = undefined,
@@ -15,7 +18,7 @@ export default class MessageSendComponent {
     // current message
     const message = [
       this.diceRolled(chanceDice, damageDice, damageRolls, remainingHp),
-      storyContent.content,
+      JSONStringTemplateParser(storyContent.content, templateObjects),
     ].join("");
 
     //send message + image if the fileDestination in example.json is not empty. If the fileDestination

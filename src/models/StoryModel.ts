@@ -3,6 +3,7 @@ import StoryPlotPointsModel from "./StoryPlotPointsModel";
 export default interface StoryModel {
   storyId: string;
   name: string;
-  hitpoints: number,
+  parsingVariables: object;
+  hitpoints: number;
   plotPoints: StoryPlotPointsModel[];
 }
