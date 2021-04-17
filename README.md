@@ -50,11 +50,27 @@ This command needs two things
 - `storyId` (required) The story you want to play
 - `settings` (optional) Changes the variables within the story. See all settings in the table below.
 
-| Settings | |
-|---	|---	|
-| hp:[number] | Set hitpoints (default hp is in the story) |
-| plotpoint:[number]  | Set where to begin within the story |
-| time:[number]       | Set the time between each choice |
+<table>
+    <thead>
+        <tr>
+            <th colspan=2>Settings</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>hp:[number]</td>
+            <td>Set hitpoints (default hp is in the story)</td>
+        </tr>
+        <tr>
+            <td>plotpoint:[number]</td>
+            <td>Set where to begin within the story</td>
+        </tr>
+        <tr>
+            <td>time:[number]</td>
+            <td>Set the time between each choice</td>
+        </tr>
+    </tbody>
+</table>
 <br>
 
 The `storyId` is needed to choose your story. The `plotPointId` is an optional addition to go directly to a certain plot point.
