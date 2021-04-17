@@ -100,6 +100,8 @@ export default class SetupNextMessage {
     let damageDice: string[] | undefined = undefined;
     let damageRolls: number[] | undefined = undefined;
 
+    if(!currentPlotPointResult.next) return nextStoryPlotPoint
+
     if ( // check if there is a dice roll to be made
       currentPlotPointResult.next.deathId !== null &&
       currentPlotPointResult.next.rollAtLeast !== null &&
@@ -118,10 +120,12 @@ export default class SetupNextMessage {
           damageRolls.push(this.getRandomInt(parseInt(damageDice[1])));
         }
 
-        this.story.hitpoints = (damageRolls as number[]).reduce( // reduce HitPoints
+        const totalDamge = (damageRolls as number[]).reduce( // reduce HitPoints
           (a, b) => a + b,
           0
         );
+
+        this.story.hitpoints -= totalDamge;
         
         if (this.story.hitpoints <= 0) {
           this.story.currentPlotPointId = currentPlotPointResult.next.deathId as number; // Death story
@@ -144,7 +148,7 @@ export default class SetupNextMessage {
     
 
     new SendComponent(
-      this.story.channel,
+      this.story,
       nextStoryPlotPoint,
       chanceDice,
       damageDice,

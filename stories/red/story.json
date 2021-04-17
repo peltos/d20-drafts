@@ -5,7 +5,7 @@
   "plotPoints": [
     {
       "content": "This is the start of the story! You start in a cave with a sword and shield. You can go left or right. Choose 1️⃣ for left and 2️⃣ for right",
-      "imageFile": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberries.jpg",
+      "imageFile": "./stories/red/images/red.jpg",
       "plotPointId": 0,
       "reactions": [
         {
@@ -32,7 +32,7 @@
     },
     {
       "content": "You see the exit in the distance! But there is a evil monster in front of it. Choose 1️⃣ to fight (1d20 roll, roll higher than a 12) or 2️⃣ to run away!",
-      "imageFile": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberries.jpg",
+      "imageFile": "./stories/red/images/red.jpg",
       "plotPointId": 1,
       "reactions": [
         {
@@ -59,19 +59,19 @@
     },
     {
       "content": "Oh no! You fell inside a spiked pit and did not make it out alive... Beter luck next time!",
-      "imageFile": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberries.jpg",
+      "imageFile": "./stories/red/images/red.jpg",
       "plotPointId": 2,
       "reactions": false
     },
     {
       "content": "You slashed the evil monster and it died. You can savely leave the cave, Congratulations!",
-      "imageFile": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberries.jpg",
+      "imageFile": "./stories/red/images/red.jpg",
       "plotPointId": 3,
       "reactions": false
     },
     {
       "content": "You missed your attack! The monster got a hit on you! Choose 1️⃣ to fight again (1d20 roll, roll higher then a 12) and 2️⃣ to run away!",
-      "imageFile": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberries.jpg",
+      "imageFile": "./stories/red/images/red.jpg",
       "plotPointId": 4,
       "reactions": [
         {
@@ -98,7 +98,7 @@
     },
     {
       "content": "You missed with your sword and the evil monster put his claw in your ribcage. You lay on the ground and die in a few seconds. Beter luck next time!",
-      "imageFile": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberries.jpg",
+      "imageFile": "./stories/red/images/red.jpg",
       "plotPointId": 5,
       "reactions": false
     }

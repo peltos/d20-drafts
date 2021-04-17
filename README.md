@@ -74,6 +74,15 @@ Example (going to a specific Plot Point with different Hitpoints):
 !d20d start example plotpoint:2 hp:24
 ```
 
+### Stop
+
+To stop your story you only need to enter this command in the channel where the story is activated.
+
+```
+!d20d stop
+```
+It will give a message that it stopped.
+
 ## Config
 
 The following options are available in the `.env` file,

@@ -1,21 +1,26 @@
-import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
+import { Message } from "discord.js";
 import ConsoleTimeComponent from "./Console/ConsoleTimeComponent";
 import StoryReactionsModel from "../models/StoryReactionsModel";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
+import StoryModel from "../models/StoryModel";
 
 export default class SendComponent {
   constructor(
-    channel: TextChannel | DMChannel | GroupDMChannel,
+    story: StoryModel,
     storyContent: StoryPlotPointsModel,
     chanceDice: number | undefined = undefined,
     damageDice: string[] | undefined = undefined,
     damageRolls: number[] | undefined = undefined,
     remainingHp: number | undefined = undefined
   ) {
+    const date = this.formatDate(new Date().setMilliseconds(story.time));
+
     // current message
     const message = [
       this.diceRolled(chanceDice, damageDice, damageRolls, remainingHp),
       storyContent.content,
+      "\n\n",
+      `The deadline in at: **${date}**`,
     ].join("");
 
     //send message + image if the imageFile in example.json is not empty. If the imageFile
@@ -25,23 +30,61 @@ export default class SendComponent {
         ? { files: [storyContent.imageFile] }
         : undefined;
 
-    channel.send(message, file).then((msg) => {
+    story.channel.send(message, file).then((msg) => {
       new ConsoleTimeComponent("Message send succesful");
       if (storyContent.reactions) {
         const reactions = storyContent.reactions;
-        this.recursiveReaction(msg as Message, reactions as StoryReactionsModel[]);
+        this.recursiveReaction(
+          msg as Message,
+          reactions as StoryReactionsModel[]
+        );
       }
     });
   }
 
-  private recursiveReaction(msg: Message, reactions: StoryReactionsModel[], count = 0) {
+  private recursiveReaction(
+    msg: Message,
+    reactions: StoryReactionsModel[],
+    count = 0
+  ) {
     const currentReaction = reactions[count];
     if (currentReaction !== undefined) {
       msg.react((currentReaction as StoryReactionsModel).emoji).then(() => {
         count++;
-        if (reactions.length !== 0) this.recursiveReaction(msg, reactions, count);
+        if (reactions.length !== 0)
+          this.recursiveReaction(msg, reactions, count);
       });
     }
+  }
+
+  private formatDate(timestamp: number) {
+    const d = new Date(timestamp);
+    const year = d.getFullYear();
+    const date = d.getDate();
+    const months = [
+      "Januari",
+      "Februari",
+      "Maart",
+      "April",
+      "Mei",
+      "Juni",
+      "July",
+      "Augustus",
+      "September",
+      "Oktober",
+      "November",
+      "December",
+    ];
+    const monthIndex = d.getMonth() as number;
+    const monthName = months[monthIndex];
+
+    const days = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
+    const dayIndex = d.getDay();
+    const dayName = days[dayIndex];
+    const hours = d.getHours();
+    const minutes = d.getMinutes();
+
+    return `${dayName}, ${date} ${monthName} ${year} - ${hours}:${minutes}`;
   }
 
   private diceRolled = (

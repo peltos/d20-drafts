@@ -49,8 +49,20 @@ export default class StartCommand {
       new ConsoleTimeComponent(...new Msg().errorStoryNotFound(this.storyId)); // Story not found
       return;
     }
+    const tempContent = this.plotPoint.content;
 
-    new SendComponent(message.channel, this.plotPoint); // Send message
+    this.plotPoint.content = [
+      "----------------------\n",
+      `Story: **${this.readStory.name}**\n`,
+      `Hitpoints: **${this.readStory.hitpoints}**\n`,
+      `Starting Plotpoint: **${this.readStory.currentPlotPointId}**\n`,
+      `Time between plot points: **${this.readStory.time / 1000} seconds**\n`,
+      "----------------------\n",
+      this.plotPoint.content,
+    ].join("");
+
+    new SendComponent(this.readStory, this.plotPoint); // Send message
+    this.plotPoint.content = tempContent;
     new ConsoleTimeComponent(
       ...new Msg().msgStartStory(this.readStory, message)
     ); // Story Started
@@ -62,7 +74,7 @@ export default class StartCommand {
     args.map((arg) => {
       const settings = arg.split(":");
       switch (settings[0]) {
-        case "plotpoint":
+        case "plotpoint": 
           this.currrentStoryPlotPointId = parseInt(settings[1]);
           break;
 
@@ -92,13 +104,13 @@ export default class StartCommand {
           this.readStory = currentStory;
           this.readStory.hitpoints =
             this.hitpoints === 0 ? this.readStory.hitpoints : this.hitpoints;
-          this.readStory.currentPlotPointId = this.currrentStoryPlotPointId;
+          this.readStory.currentPlotPointId = this.readStory.plotPoints.length >= this.currrentStoryPlotPointId ? this.currrentStoryPlotPointId : 0;
           this.readStory.time = this.time;
           this.readStory.storyEnded = false;
           this.readStory.channel = message.channel;
 
           this.readStory.plotPoints.map((pp) => {
-            if (pp.plotPointId === this.currrentStoryPlotPointId) {
+            if (pp.plotPointId === this.readStory.currentPlotPointId) {
               this.plotPoint = pp;
             }
           });
