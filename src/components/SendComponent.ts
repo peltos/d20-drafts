@@ -1,9 +1,9 @@
 import { DMChannel, GroupDMChannel, Message, TextChannel } from "discord.js";
-import ConsoleTimeComponent from "./ConsoleTimeComponent";
+import ConsoleTimeComponent from "./Console/ConsoleTimeComponent";
 import StoryReactionsModel from "../models/StoryReactionsModel";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
-export default class MessageSendComponent {
+export default class SendComponent {
   constructor(
     channel: TextChannel | DMChannel | GroupDMChannel,
     storyContent: StoryPlotPointsModel,
@@ -18,11 +18,11 @@ export default class MessageSendComponent {
       storyContent.content,
     ].join("");
 
-    //send message + image if the fileDestination in example.json is not empty. If the fileDestination
+    //send message + image if the imageFile in example.json is not empty. If the imageFile
     //is empty, send an undefined opepration. Current image from internet.
     const file =
-      storyContent.fileDestination !== null
-        ? { files: [storyContent.fileDestination] }
+      storyContent.imageFile !== null
+        ? { files: [storyContent.imageFile] }
         : undefined;
 
     channel.send(message, file).then((msg) => {
