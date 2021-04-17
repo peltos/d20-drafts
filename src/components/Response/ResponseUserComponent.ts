@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { Message } from "discord.js";
-import StartCommand from "../commands/StartCommand";
+import StartCommand from "../Commands/StartCommand";
 import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
 import { ANSI_RESET, ANSI_FG_RED } from "../../resources/ANSIEscapeCode";
 

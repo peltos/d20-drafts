@@ -6,7 +6,7 @@ import { Client } from "discord.js";
 import EnvGuard from "./src/guards/EnvGuard";
 
 import ReadyComponent from "./src/components/ReadyComponent"
-import ClientMessageComponent from "./src/components/Client/ClientMessageComponent"
+import ClientMessageComponent from "./src/components/Clients/ClientMessageComponent"
 
 const client = new Client();
 
