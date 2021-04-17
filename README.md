@@ -38,7 +38,7 @@ These are all the commands you can do in the terminal
 ## Discord Commands
 These are all the commands used for all your adventures in discord
 
-### Start
+### &#10143; Start
 
 To start your story you only have to insert this command
 
@@ -74,7 +74,7 @@ Example (going to a specific Plot Point with different Hitpoints):
 !d20d start example plotpoint:2 hp:24
 ```
 
-### Stop
+### &#10143; Stop
 
 To stop your story you only need to enter this command in the channel where the story is activated.
 
