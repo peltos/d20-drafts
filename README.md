@@ -43,12 +43,19 @@ These are all the commands used for all your adventures in discord
 To start your story you only have to insert this command
 
 ```
-!d20d start [storyId] [plotPointId]
+!d20d start [storyId] [settings]
 ```
 This command needs two things
 
-- `storyId` (required)
-- `plotPointId`
+- `storyId` (required) The story you want to play
+- `settings` (optional) Changes the variables within the story. See all settings in the table below.
+
+| Settings | |
+|---	|---	|
+| hp:[number] | Set hitpoints (default hp is in the story) |
+| plotpoint:[number]  | Set where to begin within the story |
+| time:[number]       | Set the time between each choice |
+<br>
 
 The `storyId` is needed to choose your story. The `plotPointId` is an optional addition to go directly to a certain plot point.
 
@@ -59,7 +66,12 @@ Example (default):
 
 Example (going to a specific Plot Point):  
 ```
-!d20d start example 3
+!d20d start example plotpoint:2
+```
+
+Example (going to a specific Plot Point with different Hitpoints):  
+```
+!d20d start example plotpoint:2 hp:24
 ```
 
 ## Config
