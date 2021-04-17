@@ -88,3 +88,5 @@ It will give a message that it stopped.
 The following options are available in the `.env` file,
 - `TOKEN` - The discord token that is required to start this application
 - `TIME` - The time in miliseconds it takes for people to vote on every plot point. (defaults at 10000 miliseconds / 10 seconds)
+- `PREFIX_CHAR` - Prefix character that is used as the start of the command (default on exclamation mark "!")
+- `PREFIX_WORD` - The word that comes after the PREFIX_CHAR. (default on "d20d")
