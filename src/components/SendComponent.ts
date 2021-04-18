@@ -11,16 +11,23 @@ export default class SendComponent {
     chanceDice: number | undefined = undefined,
     damageDice: string[] | undefined = undefined,
     damageRolls: number[] | undefined = undefined,
-    remainingHp: number | undefined = undefined
+    remainingHp: number | undefined = undefined,
+    success = true
   ) {
     const date = this.formatDate(new Date().setMilliseconds(story.time));
 
     // current message
     const message = [
-      this.diceRolled(chanceDice, damageDice, damageRolls, remainingHp),
+      this.diceRolled(
+        chanceDice,
+        damageDice,
+        damageRolls,
+        remainingHp,
+        success
+      ),
       storyContent.content,
       "\n\n",
-      `The deadline in at: **${date}**`,
+      `The next story: **${date}**`,
     ].join("");
 
     //send message + image if the imageFile in example.json is not empty. If the imageFile
@@ -62,27 +69,27 @@ export default class SendComponent {
     const year = d.getFullYear();
     const date = d.getDate();
     const months = [
-      "Januari",
-      "Februari",
-      "Maart",
+      "January",
+      "February",
+      "March",
       "April",
-      "Mei",
-      "Juni",
+      "May",
+      "June",
       "July",
-      "Augustus",
+      "August",
       "September",
-      "Oktober",
+      "October",
       "November",
       "December",
     ];
     const monthIndex = d.getMonth() as number;
     const monthName = months[monthIndex];
 
-    const days = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const dayIndex = d.getDay();
     const dayName = days[dayIndex];
     const hours = d.getHours();
-    const minutes = d.getMinutes();
+    const minutes = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
 
     return `${dayName}, ${date} ${monthName} ${year} - ${hours}:${minutes}`;
   }
@@ -91,14 +98,15 @@ export default class SendComponent {
     chanceDice: number | undefined,
     damageDice: string[] | undefined,
     damageRolls: number[] | undefined,
-    remainingHp: number | undefined
+    remainingHp: number | undefined,
+    success: boolean
   ) => {
     if (chanceDice === undefined) return "";
 
     const message = [
       "----------------------\n",
       `Dice rolled: **${chanceDice}**\n`,
-      damageDice !== undefined && damageRolls !== undefined
+      !success
         ? this.damageRolls(damageDice, damageRolls, remainingHp)
         : "  **Success!**  \n",
       "----------------------\n",
@@ -112,23 +120,26 @@ export default class SendComponent {
     damageRolls: number[] | undefined,
     remainingHp: number | undefined
   ) => {
-    if (damageRolls === undefined || damageDice === undefined) return "";
     let counter = 0;
-    const totalDamage = damageRolls.reduce((a, b) => a + b, 0);
+    let damageMessage = "";
 
-    const message = [
-      "  **Failed...**  \n",
-      "\n",
-      `Damage: **${damageDice[0]}d${damageDice[1]}**\n`,
-      damageRolls.map((roll) => {
-        const rollMessage = `Roll ${counter + 1}: **${roll}**\n`;
-        counter++;
-        return rollMessage;
-      }),
-      `Total damage: **${totalDamage}**\n`,
-      "----------------------\n",
-      `Total Health left: **${remainingHp}**\n`,
-    ].join("");
+    if (damageRolls !== undefined && damageDice !== undefined) {
+      const totalDamage = damageRolls.reduce((a, b) => a + b, 0);
+      damageMessage = [
+        "\n",
+        `Damage: **${damageDice[0]}d${damageDice[1]}**\n`,
+        damageRolls.map((roll) => {
+          const rollMessage = `Roll ${counter + 1}: **${roll}**\n`;
+          counter++;
+          return rollMessage;
+        }),
+        `Total damage: **${totalDamage}**\n`,
+        "----------------------\n",
+        `Total Health left: **${remainingHp}**\n`,
+      ].join("");
+    }
+
+    const message = ["  **Failed...**  \n", damageMessage].join("");
 
     return message;
   };

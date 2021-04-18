@@ -99,13 +99,12 @@ export default class SetupNextMessage {
     let chanceDice: number | undefined = undefined;
     let damageDice: string[] | undefined = undefined;
     let damageRolls: number[] | undefined = undefined;
+    let success = true;
 
     if(!currentPlotPointResult.next) return nextStoryPlotPoint
 
     if ( // check if there is a dice roll to be made
-      currentPlotPointResult.next.deathId !== null &&
       currentPlotPointResult.next.rollAtLeast !== null &&
-      currentPlotPointResult.next.rollDamage !== null &&
       currentPlotPointResult.next.rollFailId !== null
     ) {
       chanceDice = this.getRandomInt(20); // random roll 
@@ -113,19 +112,25 @@ export default class SetupNextMessage {
       if (chanceDice >= (currentPlotPointResult.next.rollAtLeast as number)) {
         this.story.currentPlotPointId = currentPlotPointResult.next.rollSuccessId as number; // Success story after dice
       } else {
-        damageDice = (currentPlotPointResult.next.rollDamage as string).split("d");
-        damageRolls = [];
+        if ( // check if there is a dice roll to be made
+          currentPlotPointResult.next.deathId !== null &&
+          currentPlotPointResult.next.rollDamage !== null
+        ) {
+          damageDice = (currentPlotPointResult.next.rollDamage as string).split("d");
+          damageRolls = [];
 
-        for (let i = 0; i < parseInt(damageDice[0]); i++) {
-          damageRolls.push(this.getRandomInt(parseInt(damageDice[1])));
+          for (let i = 0; i < parseInt(damageDice[0]); i++) {
+            damageRolls.push(this.getRandomInt(parseInt(damageDice[1])));
+          }
+
+          const totalDamge = (damageRolls as number[]).reduce( // reduce HitPoints
+            (a, b) => a + b,
+            0
+          );
+
+          this.story.hitpoints -= totalDamge;
         }
-
-        const totalDamge = (damageRolls as number[]).reduce( // reduce HitPoints
-          (a, b) => a + b,
-          0
-        );
-
-        this.story.hitpoints -= totalDamge;
+        success = false;
         
         if (this.story.hitpoints <= 0) {
           this.story.currentPlotPointId = currentPlotPointResult.next.deathId as number; // Death story
@@ -153,7 +158,8 @@ export default class SetupNextMessage {
       chanceDice,
       damageDice,
       damageRolls,
-      this.story.hitpoints
+      this.story.hitpoints,
+      success
     );
 
     return nextStoryPlotPoint;
