@@ -5,6 +5,7 @@ An choose your own adventure Discord bot with a 20 sided Dice!
 
 ## Table of Contents  
 - [Install](#Install)  
+- [Config](#config)  
 - [Terminal Commands](#Terminal-Commands)  
 - [Discord Commands](#Discord-Commands)  
   - [Start](#&#10143;-Start)
@@ -38,6 +39,14 @@ Then start the application with
 ```
 npm start
 ```
+
+## Config
+
+The following options are available in the `.env` file,
+- `TOKEN` - The discord token that is required to start this application
+- `TIME` - The time in miliseconds it takes for people to vote on every plot point. (defaults at 10000 miliseconds / 10 seconds)
+- `PREFIX_CHAR` - Prefix character that is used as the start of the command (default on exclamation mark "!")
+- `PREFIX_WORD` - The word that comes after the PREFIX_CHAR. (default on "d20d")
 
 ## Terminal Commands
 These are all the commands you can do in the terminal
@@ -116,11 +125,3 @@ When the bot has been abruptly stopped, the reload command can restart the story
 ```
 !d20d reload
 ```
-
-## Config
-
-The following options are available in the `.env` file,
-- `TOKEN` - The discord token that is required to start this application
-- `TIME` - The time in miliseconds it takes for people to vote on every plot point. (defaults at 10000 miliseconds / 10 seconds)
-- `PREFIX_CHAR` - Prefix character that is used as the start of the command (default on exclamation mark "!")
-- `PREFIX_WORD` - The word that comes after the PREFIX_CHAR. (default on "d20d")
