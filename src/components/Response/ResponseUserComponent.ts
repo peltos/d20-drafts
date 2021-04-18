@@ -4,6 +4,7 @@ dotenv.config();
 import { Message } from "discord.js";
 import StartCommand from "../Commands/StartCommand";
 import StopCommand from "../Commands/StopCommand";
+import ReloadCommand from "../Commands/ReloadCommand";
 import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
 import {
   ANSI_RESET,
@@ -27,6 +28,9 @@ export default class ResponseUserComponent {
         break;
       case "stop":
         new StopCommand(message);
+        break;
+      case "reload":
+        new ReloadCommand(message);
         break;
       default:
         new ConsoleTimeComponent(

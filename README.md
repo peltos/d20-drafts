@@ -3,6 +3,14 @@
 # D20 Dungeon
 An choose your own adventure Discord bot with a 20 sided Dice!
 
+## Table of Contents  
+- [Install](#Install)  
+- [Terminal Commands](#Terminal-Commands)  
+- [Discord Commands](#Discord-Commands)  
+  - [Start](#&#10143;-Start)
+  - [Stop](#&#10143;-Stop)
+  - [Eeload](#&#10143;-Reload)
+
 ## Install
 
 Clone the project in the terminal.
@@ -100,6 +108,14 @@ To stop your story you only need to enter this command in the channel where the 
 !d20d stop
 ```
 It will give a message that it stopped.
+
+### &#10143; Reload
+
+When the bot has been abruptly stopped, the reload command can restart the story. It needs to be used in the same channel that was used before.
+
+```
+!d20d reload
+```
 
 ## Config
 

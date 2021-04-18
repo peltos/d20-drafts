@@ -9,11 +9,12 @@ import {
 } from "../../resources/ANSIEscapeCode";
 import SetupNextMessage from "../SetupNextMessage";
 import TimeoutModel from "../../models/TimeoutModel";
+import WriteDataComponent from "../data/WriteDataComponent";
 
 export default class ResponseBotComponent {
   constructor(message: Message) {
     Store.Stories.map((story) => {
-      if (story.channel === message.channel) {
+      if (story.channel.id === message.channel.id) {
         story.plotPoints.map((pp) => {
           if (pp.plotPointId === story.currentPlotPointId) {
             const timeout = {} as TimeoutModel;
@@ -46,8 +47,9 @@ export default class ResponseBotComponent {
 
                   let counter = 0;
                   Store.Stories.map((story) => {
-                    if (story.channel === message.channel) {
+                    if (story.channel.id === message.channel.id) {
                       Store.Stories.splice(counter, 1);
+                      new WriteDataComponent()
                     }
                     counter++;
                   });

@@ -4,10 +4,11 @@ import StoryReactionsModel from "../models/StoryReactionsModel";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 import StoryModel from "../models/StoryModel";
 import Store from "../store/Store";
+import WriteDataComponent from "./data/WriteDataComponent";
 import { ANSI_FG_RED, ANSI_RESET } from "../resources/ANSIEscapeCode";
 
 export default class SendComponent {
-  constructor(
+  constructor (
     story: StoryModel,
     storyContent: StoryPlotPointsModel,
     chanceDice: number | undefined = undefined,
@@ -50,13 +51,15 @@ export default class SendComponent {
             reactions as StoryReactionsModel[]
           );
         }
+        new WriteDataComponent()
       })
       .catch((err) => {
         new ConsoleTimeComponent(ANSI_FG_RED,err, ANSI_RESET);
         let counter = 0;
         Store.Stories.map((st) => {
-          if (story.channel === st.channel) {
+          if (story.channel.id === st.channel.id) {
             Store.Stories.splice(counter, 1);
+            new WriteDataComponent()
           }
           counter++;
         });

@@ -10,6 +10,7 @@ import {
   ANSI_FG_MAGENTA,
 } from "../../resources/ANSIEscapeCode";
 import Store from "../../store/Store";
+import WriteDataComponent from "../data/WriteDataComponent";
 
 export default class StopCommand {
 
@@ -45,6 +46,7 @@ export default class StopCommand {
             );
 
             Store.Stories.splice(counter, 1);
+            new WriteDataComponent()
           }
           counter++;
         });
