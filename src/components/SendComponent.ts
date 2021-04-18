@@ -3,6 +3,8 @@ import ConsoleTimeComponent from "./Console/ConsoleTimeComponent";
 import StoryReactionsModel from "../models/StoryReactionsModel";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 import StoryModel from "../models/StoryModel";
+import Store from "../store/Store";
+import { ANSI_FG_RED, ANSI_RESET } from "../resources/ANSIEscapeCode";
 
 export default class SendComponent {
   constructor(
@@ -37,16 +39,28 @@ export default class SendComponent {
         ? { files: [storyContent.imageFile] }
         : undefined;
 
-    story.channel.send(message, file).then((msg) => {
-      new ConsoleTimeComponent("Message send succesful");
-      if (storyContent.reactions) {
-        const reactions = storyContent.reactions;
-        this.recursiveReaction(
-          msg as Message,
-          reactions as StoryReactionsModel[]
-        );
-      }
-    });
+    story.channel
+      .send(message, file)
+      .then((msg) => {
+        new ConsoleTimeComponent("Message send succesful");
+        if (storyContent.reactions) {
+          const reactions = storyContent.reactions;
+          this.recursiveReaction(
+            msg as Message,
+            reactions as StoryReactionsModel[]
+          );
+        }
+      })
+      .catch((err) => {
+        new ConsoleTimeComponent(ANSI_FG_RED,err, ANSI_RESET);
+        let counter = 0;
+        Store.Stories.map((st) => {
+          if (story.channel === st.channel) {
+            Store.Stories.splice(counter, 1);
+          }
+          counter++;
+        });
+      });
   }
 
   private recursiveReaction(
