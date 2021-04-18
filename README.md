@@ -9,7 +9,7 @@ An choose your own adventure Discord bot with a 20 sided Dice!
 - [Discord Commands](#Discord-Commands)  
   - [Start](#&#10143;-Start)
   - [Stop](#&#10143;-Stop)
-  - [Eeload](#&#10143;-Reload)
+  - [Reload](#&#10143;-Reload)
 
 ## Install
 
