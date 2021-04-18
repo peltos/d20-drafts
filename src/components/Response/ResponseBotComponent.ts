@@ -42,15 +42,15 @@ export default class ResponseBotComponent {
                       `${message.channel.id} `,
                       ANSI_RESET
                     );
-
-                    let counter = 0;
-                    Store.Stories.map((story) => {
-                      if (story.channel === message.channel) {
-                        Store.Stories.splice(counter, 1);
-                      }
-                      counter++;
-                    });
                   }, 2000);
+
+                  let counter = 0;
+                  Store.Stories.map((story) => {
+                    if (story.channel === message.channel) {
+                      Store.Stories.splice(counter, 1);
+                    }
+                    counter++;
+                  });
                 }
               });
             }, story.time); // MiliSeconds
