@@ -56,7 +56,7 @@ export default class StartCommand {
       `Story: **${this.readStory.name}**\n`,
       `Hitpoints: **${this.readStory.hitpoints}**\n`,
       `Starting Plotpoint: **${this.readStory.currentPlotPointId}**\n`,
-      `Time between plot points: **${this.readStory.time / 1000} seconds**\n`,
+      `Time between plot points: **${this.calculateTime(this.readStory.time)}**\n`,
       "----------------------\n",
       this.plotPoint.content,
     ].join("");
@@ -66,6 +66,42 @@ export default class StartCommand {
     new ConsoleTimeComponent(
       ...new Msg().msgStartStory(this.readStory, message)
     ); // Story Started
+  }
+
+  private calculateTime(time: number) {
+    let timeDuration = time / 1000
+    const timeString = []
+
+    // Weeks
+    if(timeDuration >= 604800) {
+      timeString.push(`${Math.floor(timeDuration / 604800)} week${Math.floor(timeDuration / 604800) > 1 ? 's' : ''} `)
+      timeDuration = timeDuration % 86400;
+    }
+
+    // Days
+    if(timeDuration >= 86400) {
+      timeString.push(`${Math.floor(timeDuration / 86400)} day${Math.floor(timeDuration / 86400) > 1 ? 's' : ''} `)
+      timeDuration = timeDuration % 86400;
+    }
+
+    // Hours
+    if(timeDuration >= 3600) {
+      timeString.push(`${Math.floor(timeDuration / 3600)} hour${Math.floor(timeDuration / 3600) > 1 ? 's' : ''} `)
+      timeDuration = timeDuration % 3600;
+    }
+
+    // Minutes
+    if(timeDuration >= 60) {
+      timeString.push(`${Math.floor(timeDuration / 60)} minute${Math.floor(timeDuration / 60) > 1 ? 's' : ''} `)
+      timeDuration = timeDuration % 60;
+    }
+
+    // Seconds
+    if(Math.floor(timeDuration) > 0) {
+      timeString.push(`${Math.floor(timeDuration)} second${timeDuration > 1 ? 's' : ''} `)
+    }
+
+    return timeString.join("");
   }
 
   private initSettings(args: string[]) {
@@ -83,7 +119,7 @@ export default class StartCommand {
           break;
 
         case "time":
-          this.time = parseFloat(settings[1]) * 1000;
+          this.time = (parseFloat(settings[1]) * 1000) <= 2147483647 ? parseFloat(settings[1]) * 1000 : 2147483647;
           break;
       }
     });
