@@ -1,3 +1,5 @@
+<img alt="D20 Dungeon" src="./src/images/icon.jpg" data-canonical-src="https://gyazo.com/eb5c5741b6a9a16c692170a41a49c858.png" width="200" height="200" style="border-radius: 50%;" />
+
 # D20 Dungeon
 An choose your own adventure Discord bot with a 20 sided Dice!
 
