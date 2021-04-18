@@ -1,9 +1,9 @@
-import Store from "../../store/Store";
+import Store from "../store/Store";
 import fs from "fs";
-import { ANSI_FG_YELLOW, ANSI_RESET } from "../../resources/ANSIEscapeCode";
-import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
+import { ANSI_FG_YELLOW, ANSI_RESET } from "../resources/ANSIEscapeCode";
+import ConsoleTimeComponent from "../components/Console/ConsoleTimeComponent";
 
-export default class ReadDataComponent {
+export default class ReadData {
   constructor() {
     const dir = "./storage/";
     const file = "activeStories.json";

@@ -13,7 +13,7 @@ import {
 } from "../../resources/ANSIEscapeCode";
 import Store from "../../store/Store";
 import StoryModel from "../../models/StoryModel";
-import SendComponent from "../SendComponent";
+import SendComponent from "../Send/SendComponent";
 import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
 
 export default class StartCommand {
@@ -26,6 +26,20 @@ export default class StartCommand {
 
   constructor(message: Message, args: string[]) {
     new ConsoleTimeComponent(...new Msg().msgStartCommand()); // start command activated
+
+    // check if there are active stories
+    let activeStory = false;
+    Store.Stories.map((story) => {
+      if (message.channel.id === story.channel.id) {
+        new ConsoleTimeComponent(
+          ANSI_FG_RED,
+          `The channel already has an active story or a story thats been paused. If it's paused, please enter '!d20d reload'`,
+          ANSI_RESET
+        );
+        activeStory = true;
+      }
+    });
+    if(activeStory) return;
 
     let checkActiveStoryInChannel = false;
     Store.Stories.map((story) => {

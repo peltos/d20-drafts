@@ -1,11 +1,11 @@
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "./Console/ConsoleTimeComponent";
-import StoryReactionsModel from "../models/StoryReactionsModel";
-import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
-import StoryModel from "../models/StoryModel";
-import Store from "../store/Store";
-import WriteDataComponent from "./data/WriteDataComponent";
-import { ANSI_FG_RED, ANSI_RESET } from "../resources/ANSIEscapeCode";
+import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
+import StoryReactionsModel from "../../models/StoryReactionsModel";
+import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
+import StoryModel from "../../models/StoryModel";
+import Store from "../../store/Store";
+import WriteData from "../../data/WriteData";
+import { ANSI_FG_RED, ANSI_RESET } from "../../resources/ANSIEscapeCode";
 
 export default class SendComponent {
   constructor (
@@ -51,7 +51,7 @@ export default class SendComponent {
             reactions as StoryReactionsModel[]
           );
         }
-        new WriteDataComponent()
+        new WriteData()
       })
       .catch((err) => {
         new ConsoleTimeComponent(ANSI_FG_RED,err, ANSI_RESET);
@@ -59,7 +59,7 @@ export default class SendComponent {
         Store.Stories.map((st) => {
           if (story.channel.id === st.channel.id) {
             Store.Stories.splice(counter, 1);
-            new WriteDataComponent()
+            new WriteData()
           }
           counter++;
         });

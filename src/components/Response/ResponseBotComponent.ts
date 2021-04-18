@@ -7,9 +7,9 @@ import {
   ANSI_FG_GREEN,
   ANSI_FG_MAGENTA,
 } from "../../resources/ANSIEscapeCode";
-import SetupNextMessage from "../SetupNextMessage";
+import SetupNextMessage from "../Result/ResultComponent";
 import TimeoutModel from "../../models/TimeoutModel";
-import WriteDataComponent from "../data/WriteDataComponent";
+import WriteData from "../../data/WriteData";
 
 export default class ResponseBotComponent {
   constructor(message: Message) {
@@ -49,7 +49,7 @@ export default class ResponseBotComponent {
                   Store.Stories.map((story) => {
                     if (story.channel.id === message.channel.id) {
                       Store.Stories.splice(counter, 1);
-                      new WriteDataComponent()
+                      new WriteData()
                     }
                     counter++;
                   });

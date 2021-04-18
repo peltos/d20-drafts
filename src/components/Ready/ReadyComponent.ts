@@ -3,7 +3,7 @@ import {
   ANSI_RESET,
   ANSI_UNDERSCORE,
   ANSI_FG_GREEN,
-} from "../resources/ANSIEscapeCode";
+} from "../../resources/ANSIEscapeCode";
 
 export default class ReadyComponent {
   constructor(client: Client) {

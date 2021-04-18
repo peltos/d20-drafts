@@ -1,16 +1,16 @@
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "./Console/ConsoleTimeComponent";
+import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_CYAN,
   ANSI_FG_MAGENTA,
-} from "../resources/ANSIEscapeCode";
-import SendComponent from "./SendComponent";
-import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
-import StoryReactionsModel from "../models/StoryReactionsModel";
-import StoryModel from "../models/StoryModel";
+} from "../../resources/ANSIEscapeCode";
+import SendComponent from "../Send/SendComponent";
+import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
+import StoryReactionsModel from "../../models/StoryReactionsModel";
+import StoryModel from "../../models/StoryModel";
 
-export default class SetupNextMessage {
+export default class ResultComponent {
   public highestVoteEmoji = "";
   public currentPlotPoint = {} as StoryPlotPointsModel;
   public story = {} as StoryModel;

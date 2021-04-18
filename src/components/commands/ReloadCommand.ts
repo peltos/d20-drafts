@@ -8,7 +8,7 @@ import {
   ANSI_FG_RED,
 } from "../../resources/ANSIEscapeCode";
 import Store from "../../store/Store";
-import SendComponent from "../SendComponent";
+import SendComponent from "../Send/SendComponent";
 import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
 
 export default class ReloadCommand {
