@@ -2,9 +2,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { Message } from "discord.js";
-import StartCommand from "../Commands/StartCommand";
-import StopCommand from "../Commands/StopCommand";
-import ReloadCommand from "../Commands/ReloadCommand";
+import StartCommand from "../../commands/StartCommand";
+import StopCommand from "../../commands/StopCommand";
+import ReloadCommand from "../../commands/ReloadCommand";
 import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
 import {
   ANSI_RESET,

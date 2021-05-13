@@ -2,15 +2,15 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
+import ConsoleTimeComponent from "../components/Console/ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_RED,
   ANSI_FG_GREEN,
   ANSI_FG_MAGENTA,
-} from "../../resources/ANSIEscapeCode";
-import Store from "../../store/Store";
-import WriteData from "../../data/WriteData";
+} from "../resources/ANSIEscapeCode";
+import Store from "../store/Store";
+import WriteData from "../data/WriteData";
 
 export default class StopCommand {
 

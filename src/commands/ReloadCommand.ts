@@ -2,14 +2,14 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
+import ConsoleTimeComponent from "../components/Console/ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_RED,
-} from "../../resources/ANSIEscapeCode";
-import Store from "../../store/Store";
-import SendComponent from "../Send/SendComponent";
-import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
+} from "../resources/ANSIEscapeCode";
+import Store from "../store/Store";
+import SendComponent from "../components/Send/SendComponent";
+import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class ReloadCommand {
   constructor(message: Message) {

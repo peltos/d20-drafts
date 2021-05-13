@@ -3,18 +3,18 @@ dotenv.config();
 
 import fs from "fs";
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
+import ConsoleTimeComponent from "../components/Console/ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_YELLOW,
   ANSI_FG_RED,
   ANSI_FG_GREEN,
   ANSI_FG_MAGENTA,
-} from "../../resources/ANSIEscapeCode";
-import Store from "../../store/Store";
-import StoryModel from "../../models/StoryModel";
-import SendComponent from "../Send/SendComponent";
-import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
+} from "../resources/ANSIEscapeCode";
+import Store from "../store/Store";
+import StoryModel from "../models/StoryModel";
+import SendComponent from "../components/Send/SendComponent";
+import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class StartCommand {
   private storyId = "";
