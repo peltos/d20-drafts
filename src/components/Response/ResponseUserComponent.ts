@@ -13,7 +13,7 @@ import {
 
 export default class ResponseUserComponent {
   private prefixChar = (process.env.PREFIX_CHAR as unknown) as string;
-  private prefixWord = (process.env.PREFIX_WORD as unknown) as string;
+  private prefixWord = ((process.env.PREFIX_WORD as unknown) as string).toLowerCase();
 
   constructor(message: Message) {
     const args = this.initMessage(message);
