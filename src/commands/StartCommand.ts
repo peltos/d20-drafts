@@ -3,7 +3,7 @@ dotenv.config();
 
 import fs from "fs";
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "../components/Console/ConsoleTimeComponent";
+import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_YELLOW,
@@ -13,7 +13,7 @@ import {
 } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
-import SendComponent from "../components/Send/SendComponent";
+import SendMessageStoryComponent from "../components/SendMessageStoryComponent";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class StartCommand {
@@ -70,12 +70,12 @@ export default class StartCommand {
       `Story: **${this.readStory.name}**\n`,
       `Hitpoints: **${this.readStory.hitpoints}**\n`,
       `Starting Plotpoint: **${this.readStory.currentPlotPointId}**\n`,
-      `Time between plot points: **${this.calculateTime(this.readStory.time)}**\n`,
+      `Time between plot points: **${this.calculateTime(this.readStory.delay)}**\n`,
       "----------------------\n",
       this.plotPoint.content,
     ].join("");
 
-    new SendComponent(this.readStory, this.plotPoint); // Send message
+    new SendMessageStoryComponent(this.readStory, this.plotPoint); // Send message
     this.plotPoint.content = tempContent;
     new ConsoleTimeComponent(
       ...new Msg().msgStartStory(this.readStory, message)
@@ -155,7 +155,9 @@ export default class StartCommand {
           this.readStory.hitpoints =
             this.hitpoints === 0 ? this.readStory.hitpoints : this.hitpoints;
           this.readStory.currentPlotPointId = this.readStory.plotPoints.length >= this.currrentStoryPlotPointId ? this.currrentStoryPlotPointId : 0;
-          this.readStory.time = this.time;
+          this.readStory.delay = this.time;
+          this.readStory.timeSend = new Date().getTime();
+          this.readStory.active = true;
           this.readStory.storyEnded = false;
           this.readStory.channel = message.channel;
 

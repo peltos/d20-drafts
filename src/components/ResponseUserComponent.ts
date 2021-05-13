@@ -2,14 +2,14 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { Message } from "discord.js";
-import StartCommand from "../../commands/StartCommand";
-import StopCommand from "../../commands/StopCommand";
-import ReloadCommand from "../../commands/ReloadCommand";
-import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
+import StartCommand from "../commands/StartCommand";
+import StopCommand from "../commands/StopCommand";
+import ReloadCommand from "../commands/ReloadCommand";
+import ConsoleTimeComponent from "./ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_RED,
-} from "../../resources/ANSIEscapeCode";
+} from "../resources/ANSIEscapeCode";
 
 export default class ResponseUserComponent {
   private prefixChar = (process.env.PREFIX_CHAR as unknown) as string;

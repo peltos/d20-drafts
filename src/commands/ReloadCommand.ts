@@ -2,13 +2,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "../components/Console/ConsoleTimeComponent";
+import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_RED,
 } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
-import SendComponent from "../components/Send/SendComponent";
+import SendMessageStoryComponent from "../components/SendMessageStoryComponent";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class ReloadCommand {
@@ -38,7 +38,10 @@ export default class ReloadCommand {
             }
           })
 
-          new SendComponent(story, currentPlotPoint); // Send message
+          story.active = true;
+          story.timeSend = new Date().getTime();
+
+          new SendMessageStoryComponent(story, currentPlotPoint); // Send message
         }
       });
     }

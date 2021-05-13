@@ -1,14 +1,14 @@
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "../Console/ConsoleTimeComponent";
-import StoryReactionsModel from "../../models/StoryReactionsModel";
-import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
-import StoryModel from "../../models/StoryModel";
-import Store from "../../store/Store";
-import WriteData from "../../data/WriteData";
-import { ANSI_FG_RED, ANSI_RESET } from "../../resources/ANSIEscapeCode";
+import ConsoleTimeComponent from "./ConsoleTimeComponent";
+import StoryReactionsModel from "../models/StoryReactionsModel";
+import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
+import StoryModel from "../models/StoryModel";
+import Store from "../store/Store";
+import WriteData from "../data/WriteData";
+import { ANSI_FG_RED, ANSI_RESET } from "../resources/ANSIEscapeCode";
 
-export default class SendComponent {
-  constructor (
+export default class SendMessageStoryComponent {
+  constructor(
     story: StoryModel,
     storyContent: StoryPlotPointsModel,
     chanceDice: number | undefined = undefined,
@@ -17,7 +17,7 @@ export default class SendComponent {
     remainingHp: number | undefined = undefined,
     success = true
   ) {
-    const date = this.formatDate(new Date().setMilliseconds(story.time));
+    const date = this.formatDate(new Date().setMilliseconds(story.delay));
 
     // current message
     const message = [
@@ -43,6 +43,11 @@ export default class SendComponent {
     story.channel
       .send(message, file)
       .then((msg) => {
+        Store.Stories.map((st) => {
+          if (st.channel.id === (msg as Message).channel.id) {
+            st.messageId = (msg as Message).id;
+          }
+        });
         new ConsoleTimeComponent("Message send succesful");
         if (storyContent.reactions) {
           const reactions = storyContent.reactions;
@@ -51,17 +56,15 @@ export default class SendComponent {
             reactions as StoryReactionsModel[]
           );
         }
-        new WriteData()
+        new WriteData();
       })
       .catch((err) => {
-        new ConsoleTimeComponent(ANSI_FG_RED,err, ANSI_RESET);
-        let counter = 0;
+        new ConsoleTimeComponent(ANSI_FG_RED, err, ANSI_RESET);
         Store.Stories.map((st) => {
-          if (story.channel.id === st.channel.id) {
-            Store.Stories.splice(counter, 1);
-            new WriteData()
+          if (st.channel.id === err.channel.id) {
+            Store.Stories.splice(Store.Stories.indexOf(st), 1);
+            new WriteData();
           }
-          counter++;
         });
       });
   }

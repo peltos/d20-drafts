@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
-import ResponseUserComponent from "../Response/ResponseUserComponent";
-import ResponseBotComponent from "../Response/ResponseBotComponent";
-import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
+import ResponseUserComponent from "./ResponseUserComponent";
+import ResponseBotComponent from "./ResponseBotComponent";
+import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class ClientMessageComponent {
   public plotpoint = {} as StoryPlotPointsModel;

@@ -5,15 +5,24 @@ import {
   ANSI_FG_YELLOW,
   ANSI_RESET,
 } from "../resources/ANSIEscapeCode";
-import ConsoleTimeComponent from "../components/Console/ConsoleTimeComponent";
+import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
+import StoryModel from "../models/StoryModel";
 
 export default class WriteData {
   constructor() {
     const dir = "./storage/";
     const file = "activeStories.json";
 
+    const cloneStories = [] as StoryModel[];
+    
+    Store.Stories.map((story) => {
+      const copyStory = {...story}
+      copyStory.active = false;
+      cloneStories.push(copyStory);
+    })
+
     try {
-      fs.writeFileSync(dir + file, JSON.stringify(Store.Stories, null, 2));
+      fs.writeFileSync(dir + file, JSON.stringify(cloneStories, null, 2));
     } catch {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
@@ -30,7 +39,7 @@ export default class WriteData {
         ANSI_RESET
       );
       try {
-        fs.writeFileSync(dir + file, JSON.stringify(Store.Stories, null, 2));
+        fs.writeFileSync(dir + file, JSON.stringify(cloneStories, null, 2));
       } catch {
         new ConsoleTimeComponent(
           ANSI_FG_RED,
