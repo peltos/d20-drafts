@@ -8,9 +8,9 @@ An choose your own adventure Discord bot with a 20 sided Dice!
 - [Config](#config)  
 - [Terminal Commands](#Terminal-Commands)  
 - [Discord Commands](#Discord-Commands)  
-  - [Start](#&#10143;-Start)
-  - [Stop](#&#10143;-Stop)
-  - [Reload](#&#10143;-Reload)
+  - [Start](#Start)
+  - [Stop](#Stop)
+  - [Reload](#Reload)
 
 ## Install
 
@@ -57,7 +57,7 @@ These are all the commands you can do in the terminal
 ## Discord Commands
 These are all the commands used for all your adventures in discord
 
-### &#10143; Start
+## Start
 
 To start your story you only have to insert this command
 
@@ -109,7 +109,7 @@ Example (going to a specific Plot Point with different Hitpoints):
 !d20d start example plotpoint:2 hp:24
 ```
 
-### &#10143; Stop
+## Stop
 
 To stop your story you only need to enter this command in the channel where the story is activated.
 
@@ -118,7 +118,7 @@ To stop your story you only need to enter this command in the channel where the 
 ```
 It will give a message that it stopped.
 
-### &#10143; Reload
+## Reload
 
 When the bot has been abruptly stopped, the reload command can restart the story. It needs to be used in the same channel that was used before.
 
