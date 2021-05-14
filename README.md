@@ -9,7 +9,7 @@ An choose your own adventure Discord bot with a 20 sided Dice!
 - [Terminal Commands](#Terminal-Commands)  
 - [Discord Commands](#Discord-Commands)  
   - [Start](#Start)
-  - [Stop](#Stop)
+  - [Remove](#Remove)
   - [Reload](#Reload)
 
 ## Install
@@ -109,9 +109,9 @@ Example (going to a specific Plot Point with different Hitpoints):
 !d20d start example plotpoint:2 hp:24
 ```
 
-## Stop
+## Remove
 
-To stop your story you only need to enter this command in the channel where the story is activated.
+To remove your story you only need to enter this command in the channel where the story is activated.
 
 ```
 !d20d stop

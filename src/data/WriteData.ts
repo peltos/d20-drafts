@@ -14,12 +14,12 @@ export default class WriteData {
     const file = "activeStories.json";
 
     const cloneStories = [] as StoryModel[];
-    
+
     Store.Stories.map((story) => {
-      const copyStory = {...story}
+      const copyStory = { ...story };
       copyStory.active = false;
       cloneStories.push(copyStory);
-    })
+    });
 
     try {
       fs.writeFileSync(dir + file, JSON.stringify(cloneStories, null, 2));

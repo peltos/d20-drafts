@@ -1,14 +1,13 @@
 import { Client, TextChannel } from "discord.js";
 import Store from "../store/Store";
+import SetupNextMessage from "./ResultComponent";
 
 export default class ScanStoryProgressComponent {
   constructor(client: Client) {
     setInterval(() => {
-      // console.log(Store.Stories);
-
       Store.Stories.map((story) => {
         if (
-          story.delay + story.timeSend < new Date().getTime() &&
+          story.delay + story.startTime < new Date().getTime() &&
           story.active
         ) {
           story.plotPoints.map((pp) => {
@@ -17,7 +16,7 @@ export default class ScanStoryProgressComponent {
               (channel as TextChannel)
                 .fetchMessage(story.messageId)
                 .then((msg) => {
-                  console.log("this is a thing now");
+                  new SetupNextMessage(msg, story, pp); // figure out what the next story is gonna be.
                 });
             }
           });

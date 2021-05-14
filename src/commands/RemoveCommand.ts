@@ -11,8 +11,9 @@ import {
 } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import WriteData from "../data/WriteData";
+import SendMessageDefaultComponent from "../components/SendMessageDefaultComponent";
 
-export default class StopCommand {
+export default class RemoveCommand {
   constructor(message: Message) {
     Store.Stories.map((story) => {
       if (message.channel.id === story.channel.id) {
@@ -28,7 +29,7 @@ export default class StopCommand {
             ].join("")
           );
 
-          new ConsoleTimeComponent(
+          new SendMessageDefaultComponent(message.channel, ...new ConsoleTimeComponent(
             `Story `,
             ANSI_FG_GREEN,
             `${story.storyId.toUpperCase()} `,
@@ -41,7 +42,7 @@ export default class StopCommand {
             ANSI_FG_MAGENTA,
             `${message.channel.id} `,
             ANSI_RESET
-          );
+          ).messages);
           new WriteData();
         }
       }

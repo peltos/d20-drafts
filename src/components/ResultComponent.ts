@@ -9,6 +9,7 @@ import SendMessageStoryComponent from "./SendMessageStoryComponent";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 import StoryReactionsModel from "../models/StoryReactionsModel";
 import StoryModel from "../models/StoryModel";
+import SendMessageDefaultComponent from "./SendMessageDefaultComponent";
 
 export default class ResultComponent {
   public highestVoteEmoji = "";
@@ -27,7 +28,7 @@ export default class ResultComponent {
     const currentPlotPointResult = this.currentPlotPointResult(); 
     
     if (!this.story.storyEnded) {
-      new ConsoleTimeComponent(
+     new SendMessageDefaultComponent(message.channel, ...new ConsoleTimeComponent(
         ANSI_FG_CYAN,
         `Plot Point `,
         ANSI_RESET,
@@ -44,7 +45,7 @@ export default class ResultComponent {
         ANSI_RESET,
         "has chosen ",
         `${this.highestVoteEmoji} `
-      );
+      ).messages);
 
       this.nextStoryPlotPoint(currentPlotPointResult);
     }
@@ -150,7 +151,8 @@ export default class ResultComponent {
         }
       }
     });
-    
+
+    this.story.startTime = new Date().getTime();
 
     new SendMessageStoryComponent(
       this.story,

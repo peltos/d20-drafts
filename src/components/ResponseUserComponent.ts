@@ -3,17 +3,19 @@ dotenv.config();
 
 import { Message } from "discord.js";
 import StartCommand from "../commands/StartCommand";
-import StopCommand from "../commands/StopCommand";
+import RemoveCommand from "../commands/RemoveCommand";
 import ReloadCommand from "../commands/ReloadCommand";
+import PauseCommand from "../commands/PauseCommand";
+import TestCommand from "../commands/TestCommand";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
-import {
-  ANSI_RESET,
-  ANSI_FG_RED,
-} from "../resources/ANSIEscapeCode";
+import { ANSI_RESET, ANSI_FG_RED } from "../resources/ANSIEscapeCode";
+import SendMessageDefaultComponent from "./SendMessageDefaultComponent";
 
 export default class ResponseUserComponent {
-  private prefixChar = (process.env.PREFIX_CHAR as unknown) as string;
-  private prefixWord = ((process.env.PREFIX_WORD as unknown) as string).toLowerCase();
+  private prefixChar = process.env.PREFIX_CHAR as unknown as string;
+  private prefixWord = (
+    process.env.PREFIX_WORD as unknown as string
+  ).toLowerCase();
 
   constructor(message: Message) {
     const args = this.initMessage(message);
@@ -26,14 +28,20 @@ export default class ResponseUserComponent {
       case "start":
         new StartCommand(message, args);
         break;
-      case "stop":
-        new StopCommand(message);
+      case "remove":
+        new RemoveCommand(message);
         break;
       case "reload":
         new ReloadCommand(message);
         break;
+      case "pause":
+        new PauseCommand(message);
+        break;
+      case "test":
+        new TestCommand(message);
+        break;
       default:
-        new ConsoleTimeComponent(
+       new SendMessageDefaultComponent(message.channel, ...new ConsoleTimeComponent(
           ANSI_FG_RED,
           "Command ",
           ANSI_RESET,
@@ -41,7 +49,7 @@ export default class ResponseUserComponent {
           ANSI_FG_RED,
           "not found",
           ANSI_RESET
-        );
+        ).messages);
     }
   }
 

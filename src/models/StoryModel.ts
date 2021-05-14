@@ -11,6 +11,6 @@ export default interface StoryModel {
   currentPlotPointId: number;
   plotPoints: StoryPlotPointsModel[];
   delay: number;
-  timeSend: number;
+  startTime: number;
   active: boolean;
 }

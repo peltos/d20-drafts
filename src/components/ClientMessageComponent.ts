@@ -1,6 +1,5 @@
 import { Client } from "discord.js";
 import ResponseUserComponent from "./ResponseUserComponent";
-import ResponseBotComponent from "./ResponseBotComponent";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 
 export default class ClientMessageComponent {
@@ -9,9 +8,7 @@ export default class ClientMessageComponent {
   constructor(client: Client) {
     // When A message is sent
     client.on("message", async (message) => {
-      if (message.author.bot) {
-        new ResponseBotComponent(message); // For the discord bot. This makes the messages repeat
-      } else {
+      if (!message.author.bot) {
         new ResponseUserComponent(message); // For the user. This receives the commands
       }
     });

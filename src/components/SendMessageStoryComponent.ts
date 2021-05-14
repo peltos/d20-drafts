@@ -6,6 +6,7 @@ import StoryModel from "../models/StoryModel";
 import Store from "../store/Store";
 import WriteData from "../data/WriteData";
 import { ANSI_FG_RED, ANSI_RESET } from "../resources/ANSIEscapeCode";
+import SendMessageDefaultComponent from "./SendMessageDefaultComponent";
 
 export default class SendMessageStoryComponent {
   constructor(
@@ -48,7 +49,7 @@ export default class SendMessageStoryComponent {
             st.messageId = (msg as Message).id;
           }
         });
-        new ConsoleTimeComponent("Message send succesful");
+       new SendMessageDefaultComponent(story.channel, ...new ConsoleTimeComponent("Message send succesful").messages);
         if (storyContent.reactions) {
           const reactions = storyContent.reactions;
           this.recursiveReaction(
@@ -59,7 +60,7 @@ export default class SendMessageStoryComponent {
         new WriteData();
       })
       .catch((err) => {
-        new ConsoleTimeComponent(ANSI_FG_RED, err, ANSI_RESET);
+       new SendMessageDefaultComponent(story.channel, ...new ConsoleTimeComponent(ANSI_FG_RED, err, ANSI_RESET).messages);
         Store.Stories.map((st) => {
           if (st.channel.id === err.channel.id) {
             Store.Stories.splice(Store.Stories.indexOf(st), 1);

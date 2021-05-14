@@ -15,6 +15,7 @@ import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
 import SendMessageStoryComponent from "../components/SendMessageStoryComponent";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
+import SendMessageDefaultComponent from "../components/SendMessageDefaultComponent";
 
 export default class StartCommand {
   private storyId = "";
@@ -31,36 +32,51 @@ export default class StartCommand {
     let activeStory = false;
     Store.Stories.map((story) => {
       if (message.channel.id === story.channel.id) {
-        new ConsoleTimeComponent(
-          ANSI_FG_RED,
-          `The channel already has an active story or a story thats been paused. If it's paused, please enter '!d20d reload'`,
-          ANSI_RESET
+        new SendMessageDefaultComponent(
+          message.channel,
+          ...new ConsoleTimeComponent(
+            ANSI_FG_RED,
+            `The channel already has an active story or a story thats been paused. If it's paused, please enter '!d20d reload'`,
+            ANSI_RESET
+          ).messages
         );
         activeStory = true;
       }
     });
-    if(activeStory) return;
+    if (activeStory) return;
 
     let checkActiveStoryInChannel = false;
     Store.Stories.map((story) => {
       if (story.channel === message.channel) checkActiveStoryInChannel = true;
     });
     if (checkActiveStoryInChannel) {
-      new ConsoleTimeComponent(...new Msg().errorChannelhasStory()); // The channel already has an active story
+      new SendMessageDefaultComponent(
+        message.channel,
+        ...new ConsoleTimeComponent(...new Msg().errorChannelhasStory())
+          .messages
+      ); // The channel already has an active story
       return;
     }
 
     this.initSettings(args); // Set all the settings
 
     if (this.storyId === "") {
-      new ConsoleTimeComponent(...new Msg().errorNoStoryId()); // No Story id in the message
+      new SendMessageDefaultComponent(
+        message.channel,
+        ...new ConsoleTimeComponent(...new Msg().errorNoStoryId()).messages
+      ); // No Story id in the message
       return;
     }
 
     this.getStory(message); // get the right story from the folders
 
     if (!this.readStory.storyId) {
-      new ConsoleTimeComponent(...new Msg().errorStoryNotFound(this.storyId)); // Story not found
+      new SendMessageDefaultComponent(
+        message.channel,
+        ...new ConsoleTimeComponent(
+          ...new Msg().errorStoryNotFound(this.storyId)
+        ).messages
+      ); // Story not found
       return;
     }
     const tempContent = this.plotPoint.content;
@@ -70,49 +86,72 @@ export default class StartCommand {
       `Story: **${this.readStory.name}**\n`,
       `Hitpoints: **${this.readStory.hitpoints}**\n`,
       `Starting Plotpoint: **${this.readStory.currentPlotPointId}**\n`,
-      `Time between plot points: **${this.calculateTime(this.readStory.delay)}**\n`,
+      `Time between plot points: **${this.calculateTime(
+        this.readStory.delay
+      )}**\n`,
       "----------------------\n",
       this.plotPoint.content,
     ].join("");
 
     new SendMessageStoryComponent(this.readStory, this.plotPoint); // Send message
     this.plotPoint.content = tempContent;
-    new ConsoleTimeComponent(
-      ...new Msg().msgStartStory(this.readStory, message)
+    new SendMessageDefaultComponent(
+      message.channel,
+      ...new ConsoleTimeComponent(
+        ...new Msg().msgStartStory(this.readStory, message)
+      ).messages
     ); // Story Started
   }
 
   private calculateTime(time: number) {
-    let timeDuration = time / 1000
-    const timeString = []
+    let timeDuration = time / 1000;
+    const timeString = [];
 
     // Weeks
-    if(timeDuration >= 604800) {
-      timeString.push(`${Math.floor(timeDuration / 604800)} week${Math.floor(timeDuration / 604800) > 1 ? 's' : ''} `)
+    if (timeDuration >= 604800) {
+      timeString.push(
+        `${Math.floor(timeDuration / 604800)} week${
+          Math.floor(timeDuration / 604800) > 1 ? "s" : ""
+        } `
+      );
       timeDuration = timeDuration % 86400;
     }
 
     // Days
-    if(timeDuration >= 86400) {
-      timeString.push(`${Math.floor(timeDuration / 86400)} day${Math.floor(timeDuration / 86400) > 1 ? 's' : ''} `)
+    if (timeDuration >= 86400) {
+      timeString.push(
+        `${Math.floor(timeDuration / 86400)} day${
+          Math.floor(timeDuration / 86400) > 1 ? "s" : ""
+        } `
+      );
       timeDuration = timeDuration % 86400;
     }
 
     // Hours
-    if(timeDuration >= 3600) {
-      timeString.push(`${Math.floor(timeDuration / 3600)} hour${Math.floor(timeDuration / 3600) > 1 ? 's' : ''} `)
+    if (timeDuration >= 3600) {
+      timeString.push(
+        `${Math.floor(timeDuration / 3600)} hour${
+          Math.floor(timeDuration / 3600) > 1 ? "s" : ""
+        } `
+      );
       timeDuration = timeDuration % 3600;
     }
 
     // Minutes
-    if(timeDuration >= 60) {
-      timeString.push(`${Math.floor(timeDuration / 60)} minute${Math.floor(timeDuration / 60) > 1 ? 's' : ''} `)
+    if (timeDuration >= 60) {
+      timeString.push(
+        `${Math.floor(timeDuration / 60)} minute${
+          Math.floor(timeDuration / 60) > 1 ? "s" : ""
+        } `
+      );
       timeDuration = timeDuration % 60;
     }
 
     // Seconds
-    if(Math.floor(timeDuration) > 0) {
-      timeString.push(`${Math.floor(timeDuration)} second${timeDuration > 1 ? 's' : ''} `)
+    if (Math.floor(timeDuration) > 0) {
+      timeString.push(
+        `${Math.floor(timeDuration)} second${timeDuration > 1 ? "s" : ""} `
+      );
     }
 
     return timeString.join("");
@@ -124,7 +163,7 @@ export default class StartCommand {
     args.map((arg) => {
       const settings = arg.split(":");
       switch (settings[0]) {
-        case "plotpoint": 
+        case "plotpoint":
           this.currrentStoryPlotPointId = parseInt(settings[1]);
           break;
 
@@ -133,7 +172,10 @@ export default class StartCommand {
           break;
 
         case "time":
-          this.time = (parseFloat(settings[1]) * 1000) <= 2147483647 ? parseFloat(settings[1]) * 1000 : 2147483647;
+          this.time =
+            parseFloat(settings[1]) * 60000 <= 2147483647
+              ? parseFloat(settings[1]) * 60000
+              : 2147483647;
           break;
       }
     });
@@ -145,18 +187,21 @@ export default class StartCommand {
 
       folder.map((storyFolder) => {
         const currentStory = JSON.parse(
-          (fs.readFileSync(
+          fs.readFileSync(
             `./stories/${storyFolder}/story.json`
-          ) as unknown) as string
+          ) as unknown as string
         ) as StoryModel;
 
         if (currentStory.storyId === this.storyId) {
           this.readStory = currentStory;
           this.readStory.hitpoints =
             this.hitpoints === 0 ? this.readStory.hitpoints : this.hitpoints;
-          this.readStory.currentPlotPointId = this.readStory.plotPoints.length >= this.currrentStoryPlotPointId ? this.currrentStoryPlotPointId : 0;
+          this.readStory.currentPlotPointId =
+            this.readStory.plotPoints.length >= this.currrentStoryPlotPointId
+              ? this.currrentStoryPlotPointId
+              : 0;
           this.readStory.delay = this.time;
-          this.readStory.timeSend = new Date().getTime();
+          this.readStory.startTime = new Date().getTime();
           this.readStory.active = true;
           this.readStory.storyEnded = false;
           this.readStory.channel = message.channel;
@@ -169,15 +214,18 @@ export default class StartCommand {
         }
       });
     } catch {
-      new ConsoleTimeComponent(...new Msg().errornoDirectory());
+      new SendMessageDefaultComponent(
+        message.channel,
+        ...new ConsoleTimeComponent(...new Msg().errornoDirectory()).messages
+      );
     }
     Store.Stories.push(this.readStory);
   }
 }
 
 class Msg {
-  private prefixChar = (process.env.PREFIX_CHAR as unknown) as string;
-  private prefixWord = (process.env.PREFIX_WORD as unknown) as string;
+  private prefixChar = process.env.PREFIX_CHAR as unknown as string;
+  private prefixWord = process.env.PREFIX_WORD as unknown as string;
 
   public msgStartCommand() {
     return [ANSI_FG_YELLOW, "START ", ANSI_RESET, "command activated"];
@@ -213,6 +261,8 @@ class Msg {
   }
 
   public errorStoryNotFound(storyId: string) {
+    if(storyId === undefined) storyId = "unknown";
+
     return [
       ANSI_FG_RED,
       `Story `,
