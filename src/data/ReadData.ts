@@ -1,7 +1,7 @@
 import Store from "../store/Store";
 import fs from "fs";
 import { ANSI_FG_YELLOW, ANSI_RESET } from "../resources/ANSIEscapeCode";
-import ConsoleTimeComponent from "../components/Console/ConsoleTimeComponent";
+import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
 
 export default class ReadData {
   constructor() {
@@ -17,7 +17,7 @@ export default class ReadData {
         fs.mkdirSync(dir);
       }
       fs.writeFileSync(dir + file, JSON.stringify([], null, 2));
-      new ConsoleTimeComponent(
+     new ConsoleTimeComponent(
         `New `,
         ANSI_FG_YELLOW,
         `${file} `,

@@ -3,7 +3,7 @@ dotenv.config();
 
 import fs from "fs";
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "../components/Console/ConsoleTimeComponent";
+import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
 import {
   ANSI_RESET,
   ANSI_FG_YELLOW,
@@ -13,8 +13,10 @@ import {
 } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
-import SendComponent from "../components/Send/SendComponent";
+import SendMessageStoryComponent from "../components/SendMessage/SendMessageStoryComponent";
+import SendMessageWarningComponent from "../components/SendMessage/SendMessageWarningComponent";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
+import StatsCommand from "./StatsCommand";
 
 export default class StartCommand {
   private storyId = "";
@@ -25,97 +27,62 @@ export default class StartCommand {
   private plotPoint = {} as StoryPlotPointsModel;
 
   constructor(message: Message, args: string[]) {
-    new ConsoleTimeComponent(...new Msg().msgStartCommand()); // start command activated
-
     // check if there are active stories
     let activeStory = false;
     Store.Stories.map((story) => {
-      if (message.channel.id === story.channel.id) {
-        new ConsoleTimeComponent(
-          ANSI_FG_RED,
-          `The channel already has an active story or a story thats been paused. If it's paused, please enter '!d20d reload'`,
-          ANSI_RESET
-        );
-        activeStory = true;
+      if (story.channel) {
+        if (message.channel.id === story.channel.id) {
+          new SendMessageWarningComponent(
+            message.channel,
+            ...new ConsoleTimeComponent(...new Msg().alreadyActiveStory())
+              .messages
+          );
+          activeStory = true;
+        }
       }
     });
-    if(activeStory) return;
 
-    let checkActiveStoryInChannel = false;
-    Store.Stories.map((story) => {
-      if (story.channel === message.channel) checkActiveStoryInChannel = true;
-    });
-    if (checkActiveStoryInChannel) {
-      new ConsoleTimeComponent(...new Msg().errorChannelhasStory()); // The channel already has an active story
-      return;
-    }
+    if (activeStory) return;
 
     this.initSettings(args); // Set all the settings
 
     if (this.storyId === "") {
-      new ConsoleTimeComponent(...new Msg().errorNoStoryId()); // No Story id in the message
+      new SendMessageWarningComponent(
+        message.channel,
+        ...new ConsoleTimeComponent(...new Msg().errorNoStoryId()).messages
+      ); // No Story id in the message
       return;
     }
 
     this.getStory(message); // get the right story from the folders
 
     if (!this.readStory.storyId) {
-      new ConsoleTimeComponent(...new Msg().errorStoryNotFound(this.storyId)); // Story not found
+      if (this.storyId === undefined) {
+        new SendMessageWarningComponent(
+          message.channel,
+          ...new ConsoleTimeComponent(
+            ...new Msg().errorStoryNotInserted()
+          ).messages
+        ); // No ID inserted in the command
+        return;
+      }
+
+      new SendMessageWarningComponent(
+        message.channel,
+        ...new ConsoleTimeComponent(
+          ...new Msg().errorStoryNotFound(this.storyId)
+        ).messages
+      ); // Story if not found
       return;
     }
-    const tempContent = this.plotPoint.content;
 
-    this.plotPoint.content = [
-      "----------------------\n",
-      `Story: **${this.readStory.name}**\n`,
-      `Hitpoints: **${this.readStory.hitpoints}**\n`,
-      `Starting Plotpoint: **${this.readStory.currentPlotPointId}**\n`,
-      `Time between plot points: **${this.calculateTime(this.readStory.time)}**\n`,
-      "----------------------\n",
-      this.plotPoint.content,
-    ].join("");
+    new StatsCommand(message.channel);
 
-    new SendComponent(this.readStory, this.plotPoint); // Send message
-    this.plotPoint.content = tempContent;
+    new SendMessageStoryComponent(this.readStory, this.plotPoint); // Send message
+
     new ConsoleTimeComponent(
       ...new Msg().msgStartStory(this.readStory, message)
     ); // Story Started
-  }
-
-  private calculateTime(time: number) {
-    let timeDuration = time / 1000
-    const timeString = []
-
-    // Weeks
-    if(timeDuration >= 604800) {
-      timeString.push(`${Math.floor(timeDuration / 604800)} week${Math.floor(timeDuration / 604800) > 1 ? 's' : ''} `)
-      timeDuration = timeDuration % 86400;
-    }
-
-    // Days
-    if(timeDuration >= 86400) {
-      timeString.push(`${Math.floor(timeDuration / 86400)} day${Math.floor(timeDuration / 86400) > 1 ? 's' : ''} `)
-      timeDuration = timeDuration % 86400;
-    }
-
-    // Hours
-    if(timeDuration >= 3600) {
-      timeString.push(`${Math.floor(timeDuration / 3600)} hour${Math.floor(timeDuration / 3600) > 1 ? 's' : ''} `)
-      timeDuration = timeDuration % 3600;
-    }
-
-    // Minutes
-    if(timeDuration >= 60) {
-      timeString.push(`${Math.floor(timeDuration / 60)} minute${Math.floor(timeDuration / 60) > 1 ? 's' : ''} `)
-      timeDuration = timeDuration % 60;
-    }
-
-    // Seconds
-    if(Math.floor(timeDuration) > 0) {
-      timeString.push(`${Math.floor(timeDuration)} second${timeDuration > 1 ? 's' : ''} `)
-    }
-
-    return timeString.join("");
   }
 
   private initSettings(args: string[]) {
@@ -124,7 +91,7 @@ export default class StartCommand {
     args.map((arg) => {
       const settings = arg.split(":");
       switch (settings[0]) {
-        case "plotpoint": 
+        case "plotpoint":
           this.currrentStoryPlotPointId = parseInt(settings[1]);
           break;
 
@@ -133,7 +100,10 @@ export default class StartCommand {
           break;
 
         case "time":
-          this.time = (parseFloat(settings[1]) * 1000) <= 2147483647 ? parseFloat(settings[1]) * 1000 : 2147483647;
+          this.time =
+            parseFloat(settings[1]) * 60000 <= 2147483647
+              ? parseFloat(settings[1]) * 60000
+              : 2147483647;
           break;
       }
     });
@@ -145,17 +115,22 @@ export default class StartCommand {
 
       folder.map((storyFolder) => {
         const currentStory = JSON.parse(
-          (fs.readFileSync(
+          fs.readFileSync(
             `./stories/${storyFolder}/story.json`
-          ) as unknown) as string
+          ) as unknown as string
         ) as StoryModel;
 
         if (currentStory.storyId === this.storyId) {
           this.readStory = currentStory;
           this.readStory.hitpoints =
             this.hitpoints === 0 ? this.readStory.hitpoints : this.hitpoints;
-          this.readStory.currentPlotPointId = this.readStory.plotPoints.length >= this.currrentStoryPlotPointId ? this.currrentStoryPlotPointId : 0;
-          this.readStory.time = this.time;
+          this.readStory.currentPlotPointId =
+            this.readStory.plotPoints.length >= this.currrentStoryPlotPointId
+              ? this.currrentStoryPlotPointId
+              : 0;
+          this.readStory.delay = this.time;
+          this.readStory.startTime = new Date().getTime();
+          this.readStory.active = true;
           this.readStory.storyEnded = false;
           this.readStory.channel = message.channel;
 
@@ -167,15 +142,18 @@ export default class StartCommand {
         }
       });
     } catch {
-      new ConsoleTimeComponent(...new Msg().errornoDirectory());
+      new SendMessageWarningComponent(
+        message.channel,
+        ...new ConsoleTimeComponent(...new Msg().errornoDirectory()).messages
+      );
     }
     Store.Stories.push(this.readStory);
   }
 }
 
 class Msg {
-  private prefixChar = (process.env.PREFIX_CHAR as unknown) as string;
-  private prefixWord = (process.env.PREFIX_WORD as unknown) as string;
+  private prefixChar = process.env.PREFIX_CHAR as unknown as string;
+  private prefixWord = process.env.PREFIX_WORD as unknown as string;
 
   public msgStartCommand() {
     return [ANSI_FG_YELLOW, "START ", ANSI_RESET, "command activated"];
@@ -198,14 +176,18 @@ class Msg {
     ];
   }
 
-  public errorChannelhasStory() {
-    return [ANSI_FG_RED, `The channel already has an active story`, ANSI_RESET];
-  }
-
   public errorNoStoryId() {
     return [
       ANSI_FG_RED,
-      `No story id detected. Please enter a story id in the command ${this.prefixChar}${this.prefixWord} start [storyId]`,
+      `No story id detected. Please enter a story id in the command "${this.prefixChar}${this.prefixWord} start [storyId]"`,
+      ANSI_RESET,
+    ];
+  }
+
+  public errorStoryNotInserted() {
+    return [
+      ANSI_FG_RED,
+      `No story ID was inserted. Please enter a story id in the command "${this.prefixChar}${this.prefixWord} start [storyId]"`,
       ANSI_RESET,
     ];
   }
@@ -224,5 +206,13 @@ class Msg {
 
   public errornoDirectory() {
     return [ANSI_FG_RED, "No directory detected", ANSI_RESET];
+  }
+
+  public alreadyActiveStory() {
+    return [
+      ANSI_FG_RED,
+      `The channel already has an active story or a story thats been paused. If it's paused, please enter "${this.prefixChar}${this.prefixWord} reload"`,
+      ANSI_RESET,
+    ];
   }
 }
