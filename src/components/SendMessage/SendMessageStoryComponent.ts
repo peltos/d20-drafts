@@ -1,12 +1,13 @@
 import { Message } from "discord.js";
-import ConsoleTimeComponent from "./ConsoleTimeComponent";
-import StoryReactionsModel from "../models/StoryReactionsModel";
-import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
-import StoryModel from "../models/StoryModel";
-import Store from "../store/Store";
-import WriteData from "../data/WriteData";
-import { ANSI_FG_RED, ANSI_RESET } from "../resources/ANSIEscapeCode";
-import SendMessageDefaultComponent from "./SendMessageDefaultComponent";
+import ConsoleTimeComponent from "./../ConsoleTimeComponent";
+import StoryReactionsModel from "../../models/StoryReactionsModel";
+import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
+import StoryModel from "../../models/StoryModel";
+import Store from "../../store/Store";
+import WriteData from "../../data/WriteData";
+import { ANSI_FG_RED, ANSI_RESET } from "../../resources/ANSIEscapeCode";
+import SendMessageWarningComponent from "./SendMessageWarningComponent";
+import RemoveCommand from "../../commands/RemoveCommand";
 
 export default class SendMessageStoryComponent {
   constructor(
@@ -20,18 +21,24 @@ export default class SendMessageStoryComponent {
   ) {
     const date = this.formatDate(new Date().setMilliseconds(story.delay));
 
-    // current message
+    // check if there is a dice roll needed and collect the info
+    const diceRoll = this.diceRolled(
+      chanceDice,
+      damageDice,
+      damageRolls,
+      remainingHp,
+      success
+    );
+
+    // add dice if needed
+    if (diceRoll !== "") {
+      story.channel.send(diceRoll);
+    }
+
+    // add end of the delay to the plotpoint
     const message = [
-      this.diceRolled(
-        chanceDice,
-        damageDice,
-        damageRolls,
-        remainingHp,
-        success
-      ),
       storyContent.content,
-      "\n\n",
-      `The next story: **${date}**`,
+      this.extraContent(story.storyEnded, date)
     ].join("");
 
     //send message + image if the imageFile in example.json is not empty. If the imageFile
@@ -41,33 +48,38 @@ export default class SendMessageStoryComponent {
         ? { files: [storyContent.imageFile] }
         : undefined;
 
+    // Send the plotpoint to discord
     story.channel
       .send(message, file)
-      .then((msg) => {
-        Store.Stories.map((st) => {
+      .then((msg: Message | Message[]) => {
+        Store.Stories.map((st: StoryModel) => {
           if (st.channel.id === (msg as Message).channel.id) {
-            st.messageId = (msg as Message).id;
+            st.messageId = (msg as Message).id; // get the ID of the message to search back later
           }
         });
-       new SendMessageDefaultComponent(story.channel, ...new ConsoleTimeComponent("Message send succesful").messages);
         if (storyContent.reactions) {
           const reactions = storyContent.reactions;
           this.recursiveReaction(
+            // Add reactions resursively so that it's always consistent with the order of the reactions
             msg as Message,
             reactions as StoryReactionsModel[]
           );
         }
         new WriteData();
       })
-      .catch((err) => {
-       new SendMessageDefaultComponent(story.channel, ...new ConsoleTimeComponent(ANSI_FG_RED, err, ANSI_RESET).messages);
-        Store.Stories.map((st) => {
-          if (st.channel.id === err.channel.id) {
-            Store.Stories.splice(Store.Stories.indexOf(st), 1);
-            new WriteData();
-          }
-        });
+      .catch((err: string) => {
+        new SendMessageWarningComponent(
+          story.channel,
+          ...new ConsoleTimeComponent(ANSI_FG_RED, err, ANSI_RESET).messages
+        );
       });
+    if (story.storyEnded) {
+      Store.Stories.map((st) => {
+        if (st.channel.id === story.channel.id) {
+          new RemoveCommand(st.channel, false);
+        }
+      });
+    }
   }
 
   private recursiveReaction(
@@ -83,6 +95,24 @@ export default class SendMessageStoryComponent {
           this.recursiveReaction(msg, reactions, count);
       });
     }
+  }
+
+  private extraContent(storyEnded: boolean, date: string) {
+    let message = '';
+
+    if(!storyEnded) {
+      message = [
+        "\n\n",
+        `The next plot point: **${date}**`,
+      ].join("");
+    } else {
+      message = [
+        "\n\n",
+        `**This story has reached an end. Start this story again if you want to see other endings.**`,
+      ].join("");
+    }
+
+    return message;
   }
 
   private formatDate(timestamp: number) {

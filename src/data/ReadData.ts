@@ -2,7 +2,6 @@ import Store from "../store/Store";
 import fs from "fs";
 import { ANSI_FG_YELLOW, ANSI_RESET } from "../resources/ANSIEscapeCode";
 import ConsoleTimeComponent from "../components/ConsoleTimeComponent";
-import SendMessageDefaultComponent from "../components/SendMessageDefaultComponent";
 
 export default class ReadData {
   constructor() {

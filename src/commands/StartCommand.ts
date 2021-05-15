@@ -13,9 +13,10 @@ import {
 } from "../resources/ANSIEscapeCode";
 import Store from "../store/Store";
 import StoryModel from "../models/StoryModel";
-import SendMessageStoryComponent from "../components/SendMessageStoryComponent";
+import SendMessageStoryComponent from "../components/SendMessage/SendMessageStoryComponent";
+import SendMessageWarningComponent from "../components/SendMessage/SendMessageWarningComponent";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
-import SendMessageDefaultComponent from "../components/SendMessageDefaultComponent";
+import StatsCommand from "./StatsCommand";
 
 export default class StartCommand {
   private storyId = "";
@@ -26,42 +27,27 @@ export default class StartCommand {
   private plotPoint = {} as StoryPlotPointsModel;
 
   constructor(message: Message, args: string[]) {
-    new ConsoleTimeComponent(...new Msg().msgStartCommand()); // start command activated
-
     // check if there are active stories
     let activeStory = false;
     Store.Stories.map((story) => {
-      if (message.channel.id === story.channel.id) {
-        new SendMessageDefaultComponent(
-          message.channel,
-          ...new ConsoleTimeComponent(
-            ANSI_FG_RED,
-            `The channel already has an active story or a story thats been paused. If it's paused, please enter '!d20d reload'`,
-            ANSI_RESET
-          ).messages
-        );
-        activeStory = true;
+      if (story.channel) {
+        if (message.channel.id === story.channel.id) {
+          new SendMessageWarningComponent(
+            message.channel,
+            ...new ConsoleTimeComponent(...new Msg().alreadyActiveStory())
+              .messages
+          );
+          activeStory = true;
+        }
       }
     });
-    if (activeStory) return;
 
-    let checkActiveStoryInChannel = false;
-    Store.Stories.map((story) => {
-      if (story.channel === message.channel) checkActiveStoryInChannel = true;
-    });
-    if (checkActiveStoryInChannel) {
-      new SendMessageDefaultComponent(
-        message.channel,
-        ...new ConsoleTimeComponent(...new Msg().errorChannelhasStory())
-          .messages
-      ); // The channel already has an active story
-      return;
-    }
+    if (activeStory) return;
 
     this.initSettings(args); // Set all the settings
 
     if (this.storyId === "") {
-      new SendMessageDefaultComponent(
+      new SendMessageWarningComponent(
         message.channel,
         ...new ConsoleTimeComponent(...new Msg().errorNoStoryId()).messages
       ); // No Story id in the message
@@ -71,90 +57,32 @@ export default class StartCommand {
     this.getStory(message); // get the right story from the folders
 
     if (!this.readStory.storyId) {
-      new SendMessageDefaultComponent(
+      if (this.storyId === undefined) {
+        new SendMessageWarningComponent(
+          message.channel,
+          ...new ConsoleTimeComponent(
+            ...new Msg().errorStoryNotInserted()
+          ).messages
+        ); // No ID inserted in the command
+        return;
+      }
+
+      new SendMessageWarningComponent(
         message.channel,
         ...new ConsoleTimeComponent(
           ...new Msg().errorStoryNotFound(this.storyId)
         ).messages
-      ); // Story not found
+      ); // Story if not found
       return;
     }
-    const tempContent = this.plotPoint.content;
 
-    this.plotPoint.content = [
-      "----------------------\n",
-      `Story: **${this.readStory.name}**\n`,
-      `Hitpoints: **${this.readStory.hitpoints}**\n`,
-      `Starting Plotpoint: **${this.readStory.currentPlotPointId}**\n`,
-      `Time between plot points: **${this.calculateTime(
-        this.readStory.delay
-      )}**\n`,
-      "----------------------\n",
-      this.plotPoint.content,
-    ].join("");
+    new StatsCommand(message.channel);
 
     new SendMessageStoryComponent(this.readStory, this.plotPoint); // Send message
-    this.plotPoint.content = tempContent;
-    new SendMessageDefaultComponent(
-      message.channel,
-      ...new ConsoleTimeComponent(
-        ...new Msg().msgStartStory(this.readStory, message)
-      ).messages
+
+    new ConsoleTimeComponent(
+      ...new Msg().msgStartStory(this.readStory, message)
     ); // Story Started
-  }
-
-  private calculateTime(time: number) {
-    let timeDuration = time / 1000;
-    const timeString = [];
-
-    // Weeks
-    if (timeDuration >= 604800) {
-      timeString.push(
-        `${Math.floor(timeDuration / 604800)} week${
-          Math.floor(timeDuration / 604800) > 1 ? "s" : ""
-        } `
-      );
-      timeDuration = timeDuration % 86400;
-    }
-
-    // Days
-    if (timeDuration >= 86400) {
-      timeString.push(
-        `${Math.floor(timeDuration / 86400)} day${
-          Math.floor(timeDuration / 86400) > 1 ? "s" : ""
-        } `
-      );
-      timeDuration = timeDuration % 86400;
-    }
-
-    // Hours
-    if (timeDuration >= 3600) {
-      timeString.push(
-        `${Math.floor(timeDuration / 3600)} hour${
-          Math.floor(timeDuration / 3600) > 1 ? "s" : ""
-        } `
-      );
-      timeDuration = timeDuration % 3600;
-    }
-
-    // Minutes
-    if (timeDuration >= 60) {
-      timeString.push(
-        `${Math.floor(timeDuration / 60)} minute${
-          Math.floor(timeDuration / 60) > 1 ? "s" : ""
-        } `
-      );
-      timeDuration = timeDuration % 60;
-    }
-
-    // Seconds
-    if (Math.floor(timeDuration) > 0) {
-      timeString.push(
-        `${Math.floor(timeDuration)} second${timeDuration > 1 ? "s" : ""} `
-      );
-    }
-
-    return timeString.join("");
   }
 
   private initSettings(args: string[]) {
@@ -214,7 +142,7 @@ export default class StartCommand {
         }
       });
     } catch {
-      new SendMessageDefaultComponent(
+      new SendMessageWarningComponent(
         message.channel,
         ...new ConsoleTimeComponent(...new Msg().errornoDirectory()).messages
       );
@@ -248,21 +176,23 @@ class Msg {
     ];
   }
 
-  public errorChannelhasStory() {
-    return [ANSI_FG_RED, `The channel already has an active story`, ANSI_RESET];
-  }
-
   public errorNoStoryId() {
     return [
       ANSI_FG_RED,
-      `No story id detected. Please enter a story id in the command ${this.prefixChar}${this.prefixWord} start [storyId]`,
+      `No story id detected. Please enter a story id in the command "${this.prefixChar}${this.prefixWord} start [storyId]"`,
+      ANSI_RESET,
+    ];
+  }
+
+  public errorStoryNotInserted() {
+    return [
+      ANSI_FG_RED,
+      `No story ID was inserted. Please enter a story id in the command "${this.prefixChar}${this.prefixWord} start [storyId]"`,
       ANSI_RESET,
     ];
   }
 
   public errorStoryNotFound(storyId: string) {
-    if(storyId === undefined) storyId = "unknown";
-
     return [
       ANSI_FG_RED,
       `Story `,
@@ -276,5 +206,13 @@ class Msg {
 
   public errornoDirectory() {
     return [ANSI_FG_RED, "No directory detected", ANSI_RESET];
+  }
+
+  public alreadyActiveStory() {
+    return [
+      ANSI_FG_RED,
+      `The channel already has an active story or a story thats been paused. If it's paused, please enter "${this.prefixChar}${this.prefixWord} reload"`,
+      ANSI_RESET,
+    ];
   }
 }

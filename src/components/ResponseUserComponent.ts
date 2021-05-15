@@ -6,10 +6,10 @@ import StartCommand from "../commands/StartCommand";
 import RemoveCommand from "../commands/RemoveCommand";
 import ReloadCommand from "../commands/ReloadCommand";
 import PauseCommand from "../commands/PauseCommand";
-import TestCommand from "../commands/TestCommand";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
 import { ANSI_RESET, ANSI_FG_RED } from "../resources/ANSIEscapeCode";
-import SendMessageDefaultComponent from "./SendMessageDefaultComponent";
+import SendMessageWarningComponent from "./SendMessage/SendMessageWarningComponent";
+import StatsCommand from "../commands/StatsCommand";
 
 export default class ResponseUserComponent {
   private prefixChar = process.env.PREFIX_CHAR as unknown as string;
@@ -26,30 +26,37 @@ export default class ResponseUserComponent {
     // Commands
     switch (command) {
       case "start":
+      case "s":
         new StartCommand(message, args);
         break;
       case "remove":
-        new RemoveCommand(message);
+      case "rem":
+        new RemoveCommand(message.channel, true, args);
         break;
       case "reload":
-        new ReloadCommand(message);
+      case "rel":
+        new ReloadCommand(message.channel);
         break;
       case "pause":
-        new PauseCommand(message);
+      case "p":
+        new PauseCommand(message.channel);
         break;
-      case "test":
-        new TestCommand(message);
+      case "stats":
+        new StatsCommand(message.channel);
         break;
       default:
-       new SendMessageDefaultComponent(message.channel, ...new ConsoleTimeComponent(
-          ANSI_FG_RED,
-          "Command ",
-          ANSI_RESET,
-          `${command?.toUpperCase() as string} `,
-          ANSI_FG_RED,
-          "not found",
-          ANSI_RESET
-        ).messages);
+        new SendMessageWarningComponent(
+          message.channel,
+          ...new ConsoleTimeComponent(
+            ANSI_FG_RED,
+            "Command ",
+            ANSI_RESET,
+            `${command?.toUpperCase() as string} `,
+            ANSI_FG_RED,
+            "not found",
+            ANSI_RESET
+          ).messages
+        );
     }
   }
 

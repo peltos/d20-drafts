@@ -18,7 +18,5 @@ export default class ConsoleTimeComponent {
     });
 
     this.messages = messages;
-    
-    
   }
 }

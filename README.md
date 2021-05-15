@@ -11,6 +11,10 @@ An choose your own adventure Discord bot with a 20 sided Dice!
   - [Start](#Start)
   - [Remove](#Remove)
   - [Reload](#Reload)
+  - [Pause](#Pause)
+  - [Stats](#Stats)
+
+---
 
 ## Install
 
@@ -40,6 +44,8 @@ Then start the application with
 npm start
 ```
 
+---
+
 ## Config
 
 The following options are available in the `.env` file,
@@ -48,14 +54,19 @@ The following options are available in the `.env` file,
 - `PREFIX_CHAR` - Prefix character that is used as the start of the command (default on exclamation mark "!")
 - `PREFIX_WORD` - The word that comes after the PREFIX_CHAR. (default on "d20d")
 
+---
+
 ## Terminal Commands
 These are all the commands you can do in the terminal
 - `npm start` - to start the application
 - `npm run lint` - to activate the ESLint library
 
+---
 
 ## Discord Commands
 These are all the commands used for all your adventures in discord
+
+---
 
 ## Start
 
@@ -109,19 +120,63 @@ Example (going to a specific Plot Point with different Hitpoints):
 !d20d start example plotpoint:2 hp:24
 ```
 
+Short command:  
+```
+!d20d s example
+```
+
+---
+
 ## Remove
 
 To remove your story you only need to enter this command in the channel where the story is activated.
 
 ```
-!d20d stop
+!d20d remove
 ```
 It will give a message that it stopped.
 
+Short command:  
+```
+!d20d rem
+```
+
+---
+
 ## Reload
 
-When the bot has been abruptly stopped, the reload command can restart the story. It needs to be used in the same channel that was used before.
+When the bot has been (abruptly) stopped, the reload command can restart the story. If this happens, the story will resume at the plot point the bot was previously on. A new delay will be set at that point. It needs to be used in the same channel that was used before.
 
 ```
 !d20d reload
+```
+
+Short command:  
+```
+!d20d rel
+```
+
+---
+
+## Pause
+
+You can pause the story whenever the story is active. The next time the story is reloaded it will start at the current plot point with a new delay set.
+
+```
+!d20d pause
+```
+
+Short command:  
+```
+!d20d p
+```
+
+---
+
+## Stats
+
+This will show the current stats of the story and character.
+
+```
+!d20d stats
 ```

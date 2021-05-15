@@ -5,11 +5,10 @@ import {
   ANSI_FG_CYAN,
   ANSI_FG_MAGENTA,
 } from "../resources/ANSIEscapeCode";
-import SendMessageStoryComponent from "./SendMessageStoryComponent";
+import SendMessageStoryComponent from "./SendMessage/SendMessageStoryComponent";
 import StoryPlotPointsModel from "../models/StoryPlotPointsModel";
 import StoryReactionsModel from "../models/StoryReactionsModel";
 import StoryModel from "../models/StoryModel";
-import SendMessageDefaultComponent from "./SendMessageDefaultComponent";
 
 export default class ResultComponent {
   public highestVoteEmoji = "";
@@ -25,10 +24,10 @@ export default class ResultComponent {
     this.currentPlotPoint = plotPoint;
 
     this.checkHighestVote(message); // Check the highest vote
-    const currentPlotPointResult = this.currentPlotPointResult(); 
-    
+    const currentPlotPointResult = this.currentPlotPointResult();
+
     if (!this.story.storyEnded) {
-     new SendMessageDefaultComponent(message.channel, ...new ConsoleTimeComponent(
+      new ConsoleTimeComponent(
         ANSI_FG_CYAN,
         `Plot Point `,
         ANSI_RESET,
@@ -45,7 +44,7 @@ export default class ResultComponent {
         ANSI_RESET,
         "has chosen ",
         `${this.highestVoteEmoji} `
-      ).messages);
+      );
 
       this.nextStoryPlotPoint(currentPlotPointResult);
     }
@@ -102,29 +101,35 @@ export default class ResultComponent {
     let damageRolls: number[] | undefined = undefined;
     let success = true;
 
-    if(!currentPlotPointResult.next) return nextStoryPlotPoint
+    if (!currentPlotPointResult.next) return nextStoryPlotPoint;
 
-    if ( // check if there is a dice roll to be made
+    if (
+      // check if there is a dice roll to be made
       currentPlotPointResult.next.rollAtLeast !== null &&
       currentPlotPointResult.next.rollFailId !== null
     ) {
-      chanceDice = this.getRandomInt(20); // random roll 
+      chanceDice = this.getRandomInt(20); // random roll
 
       if (chanceDice >= (currentPlotPointResult.next.rollAtLeast as number)) {
-        this.story.currentPlotPointId = currentPlotPointResult.next.rollSuccessId as number; // Success story after dice
+        this.story.currentPlotPointId = currentPlotPointResult.next
+          .rollSuccessId as number; // Success story after dice
       } else {
-        if ( // check if there is a dice roll to be made
+        if (
+          // check if there is a dice roll to be made
           currentPlotPointResult.next.deathId !== null &&
           currentPlotPointResult.next.rollDamage !== null
         ) {
-          damageDice = (currentPlotPointResult.next.rollDamage as string).split("d");
+          damageDice = (currentPlotPointResult.next.rollDamage as string).split(
+            "d"
+          );
           damageRolls = [];
 
           for (let i = 0; i < parseInt(damageDice[0]); i++) {
             damageRolls.push(this.getRandomInt(parseInt(damageDice[1])));
           }
 
-          const totalDamge = (damageRolls as number[]).reduce( // reduce HitPoints
+          const totalDamge = (damageRolls as number[]).reduce(
+            // reduce HitPoints
             (a, b) => a + b,
             0
           );
@@ -132,21 +137,24 @@ export default class ResultComponent {
           this.story.hitpoints -= totalDamge;
         }
         success = false;
-        
+
         if (this.story.hitpoints <= 0) {
-          this.story.currentPlotPointId = currentPlotPointResult.next.deathId as number; // Death story
+          this.story.currentPlotPointId = currentPlotPointResult.next
+            .deathId as number; // Death story
         } else {
-          this.story.currentPlotPointId = currentPlotPointResult.next.rollFailId as number; // Fail story
+          this.story.currentPlotPointId = currentPlotPointResult.next
+            .rollFailId as number; // Fail story
         }
       }
     } else {
-      this.story.currentPlotPointId = currentPlotPointResult.next.rollSuccessId as number; // Success story with no dice
+      this.story.currentPlotPointId = currentPlotPointResult.next
+        .rollSuccessId as number; // Success story with no dice
     }
 
     this.story.plotPoints.map((pp) => {
       if (pp.plotPointId === this.story.currentPlotPointId) {
-        nextStoryPlotPoint = pp
-        if(!pp.reactions) {
+        nextStoryPlotPoint = pp;
+        if (!pp.reactions) {
           this.story.storyEnded = true;
         }
       }
