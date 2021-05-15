@@ -34,7 +34,6 @@ An choose your own adventure Discord bot with a 20 sided Dice!
         </tr>
     </tbody>
 </table>
-<br>
 
 ---
 
