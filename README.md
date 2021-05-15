@@ -4,6 +4,7 @@
 An choose your own adventure Discord bot with a 20 sided Dice!
 
 ## Table of Contents  
+- [Requirements](#Requirements)  
 - [Install](#Install)  
 - [Config](#config)  
 - [Terminal Commands](#Terminal-Commands)  
@@ -13,6 +14,27 @@ An choose your own adventure Discord bot with a 20 sided Dice!
   - [Reload](#Reload)
   - [Pause](#Pause)
   - [Stats](#Stats)
+
+---
+
+## Requirements
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><a href="https://nodejs.org/">Node.js</a></td>
+            <td>v12.0.0 or newer</td>
+        </tr>
+    </tbody>
+</table>
+<br>
 
 ---
 
