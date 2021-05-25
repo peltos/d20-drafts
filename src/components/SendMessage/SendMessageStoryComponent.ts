@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Attachment, Message } from "discord.js";
 import ConsoleTimeComponent from "./../ConsoleTimeComponent";
 import StoryReactionsModel from "../../models/StoryReactionsModel";
 import StoryPlotPointsModel from "../../models/StoryPlotPointsModel";
@@ -38,15 +38,30 @@ export default class SendMessageStoryComponent {
     // add end of the delay to the plotpoint
     const message = [
       storyContent.content,
-      this.extraContent(story.storyEnded, date)
+      this.extraContent(story.storyEnded, date),
     ].join("");
 
     //send message + image if the imageFile in example.json is not empty. If the imageFile
     //is empty, send an undefined opepration. Current image from internet.
-    const file =
-      storyContent.imageFile !== null
-        ? { files: [storyContent.imageFile] }
-        : undefined;
+
+    let file;
+
+    if (storyContent.imageFile?.includes("data:image/jpeg;base64")) {
+      file =
+        storyContent.imageFile !== null
+          ? new Attachment(
+              Buffer.from(
+                storyContent.imageFile.replace(/^data:image\/\w+;base64,/, ""),
+                "base64"
+              )
+            )
+          : undefined;
+    } else {
+      file =
+        storyContent.imageFile !== null
+          ? { files: [storyContent.imageFile] }
+          : undefined;
+    }
 
     // Send the plotpoint to discord
     story.channel
@@ -98,13 +113,10 @@ export default class SendMessageStoryComponent {
   }
 
   private extraContent(storyEnded: boolean, date: string) {
-    let message = '';
+    let message = "";
 
-    if(!storyEnded) {
-      message = [
-        "\n\n",
-        `The next plot point: **${date}**`,
-      ].join("");
+    if (!storyEnded) {
+      message = ["\n\n", `The next plot point: **${date}**`].join("");
     } else {
       message = [
         "\n\n",
