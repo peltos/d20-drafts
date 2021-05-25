@@ -18,6 +18,16 @@ export default class ResponseUserComponent {
   ).toLowerCase();
 
   constructor(message: Message) {
+    if (message.attachments) {
+      message.attachments.map((att) => {
+        if (att.filename.includes(".json")) {
+          console.log("Found a json file!");
+          console.log(att.url);
+          message.delete(1000);
+        }
+      });
+    }
+
     const args = this.initMessage(message);
     if (args.length === 0) return; // nothing happens if the command is wrong
 
