@@ -113,10 +113,10 @@ export default class StartCommand {
     try {
       const folder = fs.readdirSync("./stories/");
 
-      folder.map((storyFolder) => {
+      folder.map((storyFile) => {
         const currentStory = JSON.parse(
           fs.readFileSync(
-            `./stories/${storyFolder}/story.json`
+            `./stories/${storyFile}`
           ) as unknown as string
         ) as StoryModel;
 
@@ -139,6 +139,7 @@ export default class StartCommand {
               this.plotPoint = pp;
             }
           });
+          
         }
       });
     } catch {
