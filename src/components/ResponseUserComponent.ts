@@ -3,7 +3,7 @@ dotenv.config();
 
 import { Message } from "discord.js";
 import StartCommand from "../commands/StartCommand";
-import RemoveCommand from "../commands/RemoveCommand";
+import StopCommand from "../commands/StopCommand";
 import ReloadCommand from "../commands/ReloadCommand";
 import PauseCommand from "../commands/PauseCommand";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
@@ -29,9 +29,8 @@ export default class ResponseUserComponent {
       case "s":
         new StartCommand(message, args);
         break;
-      case "remove":
-      case "rem":
-        new RemoveCommand(message.channel, true, args);
+      case "stop":
+        new StopCommand(message.channel, true, args);
         break;
       case "reload":
       case "rel":

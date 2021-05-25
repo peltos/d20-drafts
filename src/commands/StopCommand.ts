@@ -13,7 +13,7 @@ import Store from "../store/Store";
 import WriteData from "../data/WriteData";
 import SendMessageWarningComponent from "../components/SendMessage/SendMessageWarningComponent";
 
-export default class RemoveCommand {
+export default class StopCommand {
   private prefixChar = process.env.PREFIX_CHAR as unknown as string;
   private prefixWord = (
     process.env.PREFIX_WORD as unknown as string
@@ -38,7 +38,7 @@ export default class RemoveCommand {
           if (args.length <= 0) {
             new SendMessageWarningComponent(
               channel,
-              `Are you sure you want to remove this story? Enter "${this.prefixChar}${this.prefixWord} remove yes"`
+              `Are you sure you want to stop this story permanently? Enter "${this.prefixChar}${this.prefixWord} stop yes"`
             );
           }
 
@@ -49,12 +49,12 @@ export default class RemoveCommand {
               case "y":
                 Store.Stories.splice(index, 1);
 
-                story.channel = channel; // story.channel is not reconized with a restart of the bot. Remake it with message.channel
+                story.channel = channel; // story.channel is not reconized with a restart of the bot. Reset it with message.channel
 
                 if (sendMessage) {
                   new SendMessageWarningComponent(
                     channel,
-                    `The story on this channel has been removed`
+                    `The story on this channel has been stopped`
                   );
                 }
 
@@ -65,7 +65,7 @@ export default class RemoveCommand {
                   ANSI_RESET,
                   "has been ",
                   ANSI_FG_RED,
-                  `removed `.toUpperCase(),
+                  `stopped `.toUpperCase(),
                   ANSI_RESET,
                   "on channel ",
                   ANSI_FG_MAGENTA,

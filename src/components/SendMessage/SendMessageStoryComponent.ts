@@ -7,7 +7,7 @@ import Store from "../../store/Store";
 import WriteData from "../../data/WriteData";
 import { ANSI_FG_RED, ANSI_RESET } from "../../resources/ANSIEscapeCode";
 import SendMessageWarningComponent from "./SendMessageWarningComponent";
-import RemoveCommand from "../../commands/RemoveCommand";
+import StopCommand from "../../commands/StopCommand";
 
 export default class SendMessageStoryComponent {
   constructor(
@@ -91,7 +91,7 @@ export default class SendMessageStoryComponent {
     if (story.storyEnded) {
       Store.Stories.map((st) => {
         if (st.channel.id === story.channel.id) {
-          new RemoveCommand(st.channel, false);
+          new StopCommand(st.channel, false);
         }
       });
     }
