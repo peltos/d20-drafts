@@ -24,8 +24,6 @@ export default class StopCommand {
     sendMessage = true,
     args: string[] = []
   ) {
-    console.log(args);
-
     // eslint-disable-next-line prefer-const
     let storyActive = false;
 

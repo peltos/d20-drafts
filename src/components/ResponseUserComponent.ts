@@ -9,7 +9,10 @@ import PauseCommand from "../commands/PauseCommand";
 import ConsoleTimeComponent from "./ConsoleTimeComponent";
 import { ANSI_RESET, ANSI_FG_RED } from "../resources/ANSIEscapeCode";
 import SendMessageWarningComponent from "./SendMessage/SendMessageWarningComponent";
+import AddStoryComponent from "./AddStoryComponent";
 import StatsCommand from "../commands/StatsCommand";
+import fs from "fs";
+import SendMessageDefaultComponent from "./SendMessage/SendMessageDefaultComponent";
 
 export default class ResponseUserComponent {
   private prefixChar = process.env.PREFIX_CHAR as unknown as string;
@@ -21,9 +24,8 @@ export default class ResponseUserComponent {
     if (message.attachments) {
       message.attachments.map((att) => {
         if (att.filename.includes(".json")) {
-          console.log("Found a json file!");
-          console.log(att.url);
-          message.delete(1000);
+          new AddStoryComponent(message, att);
+          message.delete(0);
         }
       });
     }
