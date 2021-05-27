@@ -1,19 +1,42 @@
-<img alt="D20 drafts" src="./src/images/icon.jpg" data-canonical-src="https://gyazo.com/eb5c5741b6a9a16c692170a41a49c858.png" width="200" height="200" style="border-radius: 50%;" />
+<img alt="D20 drafts" src="https://i.imgur.com/GXaFlJu.jpg" width="200" height="200" style="border-radius: 50%;" />
 
 # D20 Drafts
-An choose your own adventure Discord bot with a 20 sided Dice!
+<strong>Hello adventurers!</strong> This bot will give you the most grand adventures. Stories about fights with great beast or exploring lost civilizations. All this on your discord with all your friends!
+
+---
 
 ## Table of Contents  
+- [Description](#Description)  
+- [How to play](#htp)  
+- [Stories](#Stories)  
 - [Requirements](#Requirements)  
 - [Install](#Install)  
 - [Config](#config)  
 - [Terminal Commands](#Terminal-Commands)  
 - [Discord Commands](#Discord-Commands)  
   - [Start](#Start)
-  - [Remove](#Remove)
+  - [Stop](#Stop)
   - [Reload](#Reload)
   - [Pause](#Pause)
   - [Stats](#Stats)
+
+---
+
+## Description
+
+This bot is a "choose your own adventure" styled bot. The twist is that it has a 20 sided dice (d20) within it. With this dice the story can give you more risks and more rewards if you dare to follow the dangers paths. Need to jump over this chasm? Roll a d20 and see if you can roll higher then a 12! Does it fail? then you might take some damage and lose some HP, which is also tracked by this bot.
+
+---
+
+## <a id="htp" name="htp"></a>How to play
+
+So how do you use this bot? First you need to invite it to your server. From there you can use the "!d20d start <"storyId">" command to start your story. This will then play in the channel where your are. All the other people on the server can then vote on the direction of that story. This can be done with the emoji buttons on the bottom of the post. The bot will wait a set amount of time to collect all the responses, counts them and then goes to the next part of that story. The default time of the bot is set to 1 day but can be easily changed. Read the details of that and all the other options at the [Start](#Start) section.
+
+---
+
+## Stories
+
+But where do you find all these stories? You can make them yourself! go to https://peltos.github.io/d20d/ to create your own adventure to share with your friends or for other server!
 
 ---
 
@@ -148,19 +171,14 @@ Short command:
 
 ---
 
-## Remove
+## Stop
 
-To remove your story you only need to enter this command in the channel where the story is activated.
+To stop your story you only need to enter this command in the channel where the story is activated.
 
 ```
-!d20d remove
+!d20d stop
 ```
 It will give a message that it stopped.
-
-Short command:  
-```
-!d20d rem
-```
 
 ---
 
