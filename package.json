@@ -1,37 +1,27 @@
 {
-  "name": "discordjs-d20-drafts",
-  "version": "1.1.0",
-  "description": "An choose your own adventure Discord bot with a 20 sided Dice!",
-  "main": "index.ts",
+  "name": "fable-dice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "ts-node .",
-    "lint": "eslint . --ext .ts"
+    "start": "node index.js",
+    "deploy-commands": "node deploy-commands.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/peltos/d20-drafts"
+    "url": "git+https://github.com/peltos/fable-dice.git"
   },
-  "keywords": [],
-  "author": "n3oney",
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/peltos/d20-drafts/issues"
+    "url": "https://github.com/peltos/fable-dice/issues"
   },
-  "homepage": "https://github.com/peltos/d20-drafts",
-  "devDependencies": {
-    "@types/glob": "^7.1.3",
-    "@types/node": "^13.1.6",
-    "@types/node-fetch": "^2.5.10",
-    "@typescript-eslint/eslint-plugin": "^4.17.0",
-    "@typescript-eslint/parser": "^4.17.0",
-    "dotenv": "^8.2.0",
-    "eslint": "^7.22.0",
-    "ts-node": "^8.6.0",
-    "typescript": "^3.7.4"
-  },
+  "homepage": "https://github.com/peltos/fable-dice#readme",
   "dependencies": {
-    "discord.js": "^11.6.4",
-    "glob": "^7.1.6",
-    "node-fetch": "^2.6.1"
+    "@supabase/supabase-js": "^2.7.1",
+    "discord.js": "^14.7.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.33.0"
   }
 }
