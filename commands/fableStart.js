@@ -5,11 +5,16 @@ const {
   TextInputBuilder,
   TextInputStyle,
 } = require('discord.js');
-const { getFableById, getActiveFableByChannelId } = require( "../functions/supabase.js");
+const {
+  getFableById,
+  getActiveFableByChannelId,
+} = require('../functions/supabase.js');
+const { guardCanSendMessages } = require('../functions/guards.js');
+const { messageAlreadyActiveFable } = require('../functions/messages.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('fablestart')
+    .setName('fable-start')
     .setDescription('Start a fable')
     .addStringOption((option) =>
       option
@@ -18,14 +23,11 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
+    guardCanSendMessages(interaction);
 
-    let {channelId} = await getActiveFableByChannelId(interaction.channelId)
+    let { channelId } = await getActiveFableByChannelId(interaction.channelId);
 
-    if (channelId)
-      return await interaction.reply({
-        content: "**There is already an active fable in this channel.** \nIf there seems to be a problem with the bot, please contact the developers",
-        ephemeral: true,
-      });
+    if (channelId) return messageAlreadyActiveFable(interaction);
 
     const fableid = interaction.options.getString('fableid') ?? undefined;
     response = await getFableById(fableid);
