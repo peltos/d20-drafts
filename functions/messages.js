@@ -6,7 +6,7 @@ const {
 
 async function messageNoActiveFable(interaction) {
   await interaction.reply({
-    content:  '***There are no active fables in this channel*** \nTo start a fable you can type the `/fablestart` command with the fableid of your selected fable.',
+    content:  '***There are no active fables in this channel*** \nTo start a fable you can type the `/fable-start` command with the fableid of your selected fable.',
     ephemeral: true,
   });
 }
@@ -20,7 +20,7 @@ async function messageAlreadyActiveFable(interaction, name) {
 
 async function messageFableEnd(interaction, name) {
   await interaction.reply({
-    content: '***Fable `' + name + '` has ended***',
+    content: '---\n**Fable *' + name + '* has ended**\n---',
   });
 }
 

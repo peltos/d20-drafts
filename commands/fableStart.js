@@ -32,13 +32,13 @@ module.exports = {
     const fableid = interaction.options.getString('fableid') ?? undefined;
     response = await getFableById(fableid);
 
-    if (response === 'PGRST116')
+    const { id, name, defaultHp, published, defaultTimeInterval } = response;
+
+    if (response === 'PGRST116' || !published)
       return await interaction.reply({
-        content: '**No fable exists with this fable ID**',
+        content: '**No fable exists or has been published with this fable ID**',
         ephemeral: true,
       });
-
-    const { id, name, defaultHp } = response;
 
     // Create the modal
     const modal = new ModalBuilder().setCustomId('startFable').setTitle(name);
@@ -65,13 +65,24 @@ module.exports = {
       .setStyle(TextInputStyle.Short)
       .setPlaceholder('How much HP your character has');
 
+    // Create the text input components
+    const fableTimeIntervalInput = new TextInputBuilder()
+      .setCustomId('fableTimeInterval')
+      // The label is the prompt the user sees for this input
+      .setLabel('Time Interval (in minutes) - set 0 for manual')
+      .setValue(`${defaultTimeInterval}`)
+      // Short means only a single line of text
+      .setStyle(TextInputStyle.Short)
+      .setPlaceholder('How much time you have to choose');
+
     // An action row only holds one text input,
     // so you need one action row per text input.
     const firstRow = new ActionRowBuilder().addComponents(fableIdInput);
     const secondRow = new ActionRowBuilder().addComponents(fableHpInput);
+    const thirdRow = new ActionRowBuilder().addComponents(fableTimeIntervalInput);
 
     // Add inputs to the modal
-    modal.addComponents(firstRow, secondRow);
+    modal.addComponents(firstRow, secondRow, thirdRow);
 
     // Show the modal to the user
     await interaction.showModal(modal);

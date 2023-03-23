@@ -19,7 +19,8 @@
   "homepage": "https://github.com/peltos/fable-dice#readme",
   "dependencies": {
     "@supabase/supabase-js": "^2.7.1",
-    "discord.js": "^14.7.1"
+    "discord.js": "^14.7.1",
+    "node-cron": "^3.0.2"
   },
   "devDependencies": {
     "eslint": "^8.33.0"

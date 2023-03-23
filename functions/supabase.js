@@ -62,6 +62,24 @@ async function getReactionById(id) {
   }
 }
 
+async function getAllActiveFables() {
+  try {
+    let { data, error, status } = await supabase
+      .from('activeFable')
+      .select(`*`)
+
+    if (error && status !== 406) throw error;
+
+    if (data) {
+      return data;
+    } else {
+      throw error;
+    }
+  } catch (error) {
+    return error.code;
+  }
+}
+
 async function getActiveFableByChannelId(channelId) {
   try {
     let { data, error, status } = await supabase
@@ -107,6 +125,34 @@ async function updateActiveFablePlotpoint(activeFable, plotpoint) {
     let { error } = await supabase
       .from('activeFable')
       .update({ currentPlotpoint: plotpoint })
+      .eq('id', activeFable);
+
+    if (error) {
+      throw error;
+    }
+  } catch (error) {
+    return error.code;
+  }
+}
+async function updateActiveFableHP(activeFable, hp) {
+  try {
+    let { error } = await supabase
+      .from('activeFable')
+      .update({ hp: hp })
+      .eq('id', activeFable);
+
+    if (error) {
+      throw error;
+    }
+  } catch (error) {
+    return error.code;
+  }
+}
+async function updateActiveFableTimeInterval(activeFable, timeInterval) {
+  try {
+    let { error } = await supabase
+      .from('activeFable')
+      .update({ timeInterval })
       .eq('id', activeFable);
 
     if (error) {
@@ -186,9 +232,12 @@ module.exports = {
 
   getReactionById,
 
+  getAllActiveFables,
   getActiveFableByChannelId,
   insertActiveFable,
   updateActiveFablePlotpoint,
+  updateActiveFableHP,
+  updateActiveFableTimeInterval,
   deleteActiveFable,
 
   getUserReactionCount,
