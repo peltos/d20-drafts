@@ -25,7 +25,6 @@ let gId = 0;
 let gCurrentPlotpoint = 0;
 let gHp = 0;
 let gFableId = 0;
-let gTimeInterval = 0;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -34,13 +33,12 @@ module.exports = {
   async execute(interaction) {
     if(interaction.memberPermissions) guardCanSendMessages(interaction);
 
-    const { id, currentPlotpoint, hp, fableId, timeInterval } =
+    const { id, currentPlotpoint, hp, fableId } =
       await getActiveFableByChannelId(interaction.channelId);
     gId = id;
     gCurrentPlotpoint = currentPlotpoint;
     gHp = hp;
     gFableId = fableId;
-    gTimeInterval = timeInterval;
 
     if (!id) return messageNoActiveFable(interaction);
 
@@ -59,6 +57,7 @@ module.exports = {
 
     switch (highestCountPosition) {
       case 0:
+
         await chosenPlotpoint(interaction, reaction1);
         break;
       case 1:
@@ -86,6 +85,7 @@ async function chosenPlotpoint(interaction, chosenReaction) {
     death_plotpoint,
     rollAtLeast,
     damage,
+    label,
   } = await getReactionById(chosenReaction);
 
   if (rollAtLeast !== null) {
@@ -98,8 +98,12 @@ async function chosenPlotpoint(interaction, chosenReaction) {
         const amount = split[0];
         const dice = split[2];
         let totalDamage = 0;
+        let totalDamageRolls = "";
         for (var i = 0; i < amount; i++) {
-          totalDamage += getRandomInt(dice) + 1;
+          const damageRoll = getRandomInt(dice) + 1
+          if(i === 0) totalDamageRolls = `${damageRoll}`
+          else totalDamageRolls += ` + ${damageRoll}`
+          totalDamage += damageRoll;
         }
         const currentHealth = gHp - totalDamage;
         if (currentHealth <= 0) {
@@ -112,9 +116,10 @@ async function chosenPlotpoint(interaction, chosenReaction) {
             hp: gHp,
             roll,
             plotpoint: death_plotpoint,
-            damage: totalDamage
+            damage: totalDamage,
+            damageRolls: totalDamageRolls,
           });
-          await initPlotpoint(interaction, death_plotpoint, gTimeInterval);
+          await initPlotpoint(interaction, death_plotpoint, `--- ***${label}*** --- \n\nRoll: **${roll}** \nDamage rolls: **${totalDamageRolls} (Total: ${totalDamage})**\nRemaining health: **${currentHealth} hp**\n\n`);
           await updateActiveFablePlotpoint(gId, death_plotpoint);
         } else {
           // survived
@@ -126,9 +131,10 @@ async function chosenPlotpoint(interaction, chosenReaction) {
             hp: gHp,
             roll,
             plotpoint: fail_plotpoint,
-            damage: totalDamage
+            damage: totalDamage,
+            damageRolls: totalDamageRolls,
           });
-          await initPlotpoint(interaction, fail_plotpoint, gTimeInterval);
+          await initPlotpoint(interaction, fail_plotpoint, `--- ***${label}*** --- \n\nRoll: **${roll}** \nDamage rolls: **${totalDamageRolls} (Total: ${totalDamage})**\nRemaining health: **${currentHealth} hp**\n\n`);
           await updateActiveFablePlotpoint(gId, fail_plotpoint);
         }
         await updateActiveFableHP(gId, currentHealth)
@@ -143,7 +149,7 @@ async function chosenPlotpoint(interaction, chosenReaction) {
           roll,
           plotpoint: fail_plotpoint
         });
-        await initPlotpoint(interaction, fail_plotpoint, gTimeInterval);
+        await initPlotpoint(interaction, fail_plotpoint, `--- ***${label}*** --- \n\nRoll: **${roll}** \nRemaining health: **0 (Instant Death)**\n\n`);
         updateActiveFablePlotpoint(gId, fail_plotpoint);
       }
     } else {
@@ -157,7 +163,7 @@ async function chosenPlotpoint(interaction, chosenReaction) {
         roll,
         plotpoint: success_plotpoint
       });
-      await initPlotpoint(interaction, success_plotpoint, gTimeInterval);
+      await initPlotpoint(interaction, success_plotpoint, `--- ***${label}*** --- \n\nRoll: **${roll}** \n\n`);
       updateActiveFablePlotpoint(gId, success_plotpoint);
     }
   } else {
@@ -170,7 +176,7 @@ async function chosenPlotpoint(interaction, chosenReaction) {
       hp: gHp,
       plotpoint: success_plotpoint
     });
-    await initPlotpoint(interaction, success_plotpoint,gTimeInterval);
+    await initPlotpoint(interaction, success_plotpoint, `--- ***${label}*** --- \n\n`);
     updateActiveFablePlotpoint(gId, success_plotpoint);
   }
 }

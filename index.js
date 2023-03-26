@@ -161,7 +161,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         '>\u001b[0m',
     });
 
-    return await initPlotpoint(interaction, start_plotpoint, fableTimeInterval, true);
+    return await initPlotpoint(interaction, start_plotpoint, `Starting health: **${fableHp} hp**\n\n`);
   }
 });
 

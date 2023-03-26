@@ -9,7 +9,7 @@ const { getClient } = require('./init.js');
 
 const client = getClient();
 
-async function initPlotpoint(interaction, start_plotpoint, isModal) {
+async function initPlotpoint(interaction, start_plotpoint, extraContent = '') {
   const {
     content,
     imageUrl,
@@ -48,42 +48,39 @@ async function initPlotpoint(interaction, start_plotpoint, isModal) {
     updateActiveFableTimeInterval(id,0)
   }
 
-  if(isModal) {
+  if(interaction) {
     if (imageUrl) {
       const attachment = new AttachmentBuilder(imageUrl, {
         name: 'plotpoint.jpg',
       });
-      await interaction.reply({
-        content: content,
+      await interaction.reply({ //  unknown interation error.
+        content: extraContent + content,
         components: [reactionButtonRows],
         files: [attachment],
       });
     } else {
       await interaction.reply({
-        content: content,
+        content: extraContent + content,
         components: [reactionButtonRows],
       });
     }
   }else {
-
     if (imageUrl) {
       const attachment = new AttachmentBuilder(imageUrl, {
         name: 'plotpoint.jpg',
       });
       await client.channels.cache.get(interaction.channelId).send({
-        content: content,
+        content: extraContent + content,
         components: [reactionButtonRows],
         files: [attachment],
       });
     } else {
       await client.channels.cache.get(interaction.channelId).send({
-        content: content,
+        content: extraContent + content,
         components: [reactionButtonRows],
       });
     }
   }
-
-  
 }
 
 function addReactionComponents(customId, label, style) {

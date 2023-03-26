@@ -13,12 +13,12 @@ module.exports = {
   async execute(interaction) {
     guardCanSendMessages(interaction);
 
-    const { id, currentPlotpoint, timeInterval } = await getActiveFableByChannelId(
+    const { id, currentPlotpoint } = await getActiveFableByChannelId(
       interaction.channelId
     );
 
     if (!id) return messageNoActiveFable(interaction);
 
-    await initPlotpoint(interaction, currentPlotpoint, timeInterval);
+    await initPlotpoint(interaction, currentPlotpoint);
   },
 };
